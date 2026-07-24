@@ -23,7 +23,7 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
       - name: Run tests (excluding browser tests)
-        run: bundle exec rspec --exclude-pattern "system/**/*"
+        run: bundle exec rake test
 
   system:
     name: Browser tests (widget)
@@ -35,7 +35,7 @@ jobs:
           ruby-version: "3.4"
           bundler-cache: true
       - name: Run system tests
-        run: bundle exec rspec spec/system
+        run: bundle exec rake test:system
 
   lint:
     name: RuboCop

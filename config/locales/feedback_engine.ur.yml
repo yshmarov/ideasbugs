@@ -1,7 +1,7 @@
 ur:
   feedback_engine:
     button: "رائے"
-    title: "رائے بھیجیں"
+    title: "خرابی کی اطلاع / فیچر کی درخواست بھیجیں"
     kind: "قسم"
     kinds:
       bug: "خرابی کی اطلاع"

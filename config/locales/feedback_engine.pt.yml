@@ -1,7 +1,7 @@
 pt:
   feedback_engine:
     button: "Feedback"
-    title: "Enviar feedback"
+    title: "Relatar erro / sugerir funcionalidade"
     kind: "Tipo"
     kinds:
       bug: "Relatar erro"

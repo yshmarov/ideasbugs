@@ -1,7 +1,7 @@
 es:
   feedback_engine:
     button: "Comentarios"
-    title: "Enviar comentarios"
+    title: "Reportar un error / pedir una función"
     kind: "Tipo"
     kinds:
       bug: "Informe de error"

@@ -1,7 +1,7 @@
 zh-CN:
   feedback_engine:
     button: "反馈"
-    title: "发送反馈"
+    title: "提交错误报告 / 功能请求"
     kind: "类型"
     kinds:
       bug: "错误报告"

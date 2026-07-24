@@ -1,7 +1,7 @@
 ar:
   feedback_engine:
     button: "ملاحظات"
-    title: "إرسال ملاحظات"
+    title: "الإبلاغ عن خطأ / طلب ميزة"
     kind: "النوع"
     kinds:
       bug: "الإبلاغ عن خطأ"

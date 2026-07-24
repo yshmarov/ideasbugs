@@ -1,7 +1,7 @@
 bn:
   feedback_engine:
     button: "মতামত"
-    title: "মতামত পাঠান"
+    title: "ত্রুটি জানান / ফিচারের অনুরোধ করুন"
     kind: "ধরন"
     kinds:
       bug: "ত্রুটি জানান"

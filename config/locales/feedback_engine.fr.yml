@@ -1,7 +1,7 @@
 fr:
   feedback_engine:
     button: "Commentaires"
-    title: "Envoyer un commentaire"
+    title: "Signaler un bug / demander une fonctionnalité"
     kind: "Type"
     kinds:
       bug: "Signaler un bug"

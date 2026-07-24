@@ -1,7 +1,7 @@
 vi:
   feedback_engine:
     button: "Phản hồi"
-    title: "Gửi phản hồi"
+    title: "Gửi báo lỗi / yêu cầu tính năng"
     kind: "Loại"
     kinds:
       bug: "Báo lỗi"

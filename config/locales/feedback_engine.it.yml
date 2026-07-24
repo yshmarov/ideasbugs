@@ -1,7 +1,7 @@
 it:
   feedback_engine:
     button: "Feedback"
-    title: "Invia feedback"
+    title: "Segnala un errore / richiedi una funzionalità"
     kind: "Tipo"
     kinds:
       bug: "Segnala un errore"

@@ -171,9 +171,41 @@ any element and (optionally) hide the button:
 config.show_button = false # optional
 ```
 
+Gate the trigger with the same check the widget uses — `feedback_engine_tag`
+renders nothing when `config.enabled` rejects the request, so an unguarded
+trigger would be a dead button for those users. The gem ships a
+`feedback_engine.title` label ("Send bug/feature request") in every bundled language, so
+a localized trigger needs no keys of your own:
+
 ```erb
-<button data-feedback-engine-open>Send feedback</button>
+<% if FeedbackEngine.enabled?(request) %>
+  <button data-feedback-engine-open><%= t("feedback_engine.title") %></button>
+<% end %>
 ```
+
+### Loading the widget only where it's used
+
+`feedback_engine_tag` in the layout puts the widget on every page. If your
+only trigger lives on one page, render the tag on that page instead — for
+example into the layout's `<head>` via `content_for`:
+
+```erb
+<%# app/views/layouts/application.html.erb %>
+<head>
+  ...
+  <%= yield :head %>
+</head>
+
+<%# app/views/users/show.html.erb — the page with the trigger %>
+<% content_for :head, feedback_engine_tag %>
+```
+
+This is Turbo-safe: the script installs its document-level listeners once per
+session and re-renders on `turbo:load` (see [Turbo](#turbo)), whether it
+arrives on the first page load or a later visit. The trade-off: a
+`data-feedback-engine-open` element on a page that never rendered the tag
+silently does nothing — if triggers may appear on several pages, keep the tag
+in the layout.
 
 ### Protecting the dashboard
 
@@ -291,11 +323,12 @@ document-level listeners once and re-renders on `turbo:load`.
 
 ```bash
 bin/setup        # or: bundle install
-bundle exec rspec        # includes browser tests (headless Chrome)
+bundle exec rake test        # unit + integration
+bundle exec rake test:system # browser tests (headless Chrome)
 bundle exec rubocop
 ```
 
-Tests run against a dummy Rails app under `spec/dummy`; the widget itself is
+Tests run against a dummy Rails app under `test/dummy`; the widget itself is
 covered by Capybara system tests in a real browser. CI runs the suite across
 Rails 7.1 / 7.2 / 8.0 / 8.1 and Ruby 3.2–3.4 (per-version Gemfiles live in
 `gemfiles/`).

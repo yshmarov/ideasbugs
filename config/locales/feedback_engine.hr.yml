@@ -1,7 +1,7 @@
 hr:
   feedback_engine:
     button: "Povratne informacije"
-    title: "Pošaljite povratne informacije"
+    title: "Prijavi grešku / predloži značajku"
     kind: "Vrsta"
     kinds:
       bug: "Prijava greške"

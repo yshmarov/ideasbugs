@@ -1,7 +1,7 @@
 hi:
   feedback_engine:
     button: "प्रतिक्रिया"
-    title: "प्रतिक्रिया भेजें"
+    title: "बग रिपोर्ट / फ़ीचर अनुरोध भेजें"
     kind: "प्रकार"
     kinds:
       bug: "बग रिपोर्ट"

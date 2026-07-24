@@ -1,7 +1,7 @@
 tr:
   feedback_engine:
     button: "Geri bildirim"
-    title: "Geri bildirim gönder"
+    title: "Hata bildir / özellik iste"
     kind: "Tür"
     kinds:
       bug: "Hata bildirimi"

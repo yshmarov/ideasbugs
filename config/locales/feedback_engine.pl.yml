@@ -1,7 +1,7 @@
 pl:
   feedback_engine:
     button: "Opinie"
-    title: "Wyślij opinię"
+    title: "Zgłoś błąd / zaproponuj funkcję"
     kind: "Typ"
     kinds:
       bug: "Zgłoszenie błędu"

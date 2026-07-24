@@ -1,7 +1,7 @@
 en:
   feedback_engine:
     button: "Feedback"
-    title: "Send feedback"
+    title: "Send bug/feature request"
     kind: "Type"
     kinds:
       bug: "Bug report"

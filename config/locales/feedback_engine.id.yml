@@ -1,7 +1,7 @@
 id:
   feedback_engine:
     button: "Masukan"
-    title: "Kirim masukan"
+    title: "Kirim laporan bug / permintaan fitur"
     kind: "Jenis"
     kinds:
       bug: "Laporan bug"

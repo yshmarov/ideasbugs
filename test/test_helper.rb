@@ -2,9 +2,9 @@
 
 ENV['RAILS_ENV'] ||= 'test'
 
-require_relative 'spec_helper'
 require_relative 'dummy/config/environment'
-require 'rspec/rails'
+require 'rails/test_help'
+require 'rack/test'
 
 ActiveRecord::Schema.verbose = false
 ActiveRecord::Schema.define do
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define do
   add_index :feedback_engine_feedbacks, :status
   add_index :feedback_engine_feedbacks, :kind
 
-  # Active Storage tables, so screenshot attachments work in specs.
+  # Active Storage tables, so screenshot attachments work in tests.
   create_table :active_storage_blobs, force: true do |t|
     t.string :key, null: false
     t.string :filename, null: false
@@ -54,23 +54,24 @@ ActiveRecord::Schema.define do
   end
 end
 
-RSpec.configure do |config|
-  config.use_transactional_fixtures = true
-  config.infer_spec_type_from_file_location!
+module ActiveSupport
+  class TestCase
+    self.file_fixture_path = File.expand_path('fixtures/files', __dir__)
 
-  config.before(type: :system) do
-    driven_by :selenium, using: :headless_chrome, screen_size: [1200, 900]
+    # Start every test from a fresh config, so a stub in one test can never
+    # leak into another under random order. The cache reset keeps the rate
+    # limiter's per-IP counters from tripping later tests.
+    setup do
+      FeedbackEngine.instance_variable_set(:@config, FeedbackEngine::Configuration.new)
+      Rails.cache.clear
+    end
+
+    teardown do
+      FeedbackEngine.instance_variable_set(:@config, nil)
+    end
   end
+end
 
-  # Start every example from a fresh config, so a stub in one example can never
-  # leak into another under random order.
-  config.around do |example|
-    FeedbackEngine.instance_variable_set(:@config, FeedbackEngine::Configuration.new)
-    example.run
-    FeedbackEngine.instance_variable_set(:@config, nil)
-  end
-
-  # The rate limiter counts per IP in Rails.cache; without a reset, create
-  # requests from earlier examples would trip the limit for later ones.
-  config.before { Rails.cache.clear }
+class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+  driven_by :selenium, using: :headless_chrome, screen_size: [1200, 900]
 end

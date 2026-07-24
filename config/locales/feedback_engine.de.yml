@@ -1,7 +1,7 @@
 de:
   feedback_engine:
     button: "Feedback"
-    title: "Feedback senden"
+    title: "Fehler melden / Funktion vorschlagen"
     kind: "Art"
     kinds:
       bug: "Fehlerbericht"

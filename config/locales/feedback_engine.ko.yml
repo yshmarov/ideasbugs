@@ -1,7 +1,7 @@
 ko:
   feedback_engine:
     button: "피드백"
-    title: "피드백 보내기"
+    title: "버그 신고 / 기능 요청 보내기"
     kind: "유형"
     kinds:
       bug: "버그 신고"

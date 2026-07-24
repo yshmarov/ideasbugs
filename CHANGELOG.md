@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.2 (2026-07-25)
+
+- The default title CTA (`feedback_engine.title`, used as the modal heading
+  and by host-rendered triggers) now reads "Send bug/feature request" instead
+  of "Send feedback", localized in all 26 bundled languages.
+- The test suite migrated from RSpec to Minitest (development-only change;
+  nothing in the shipped gem is affected). `bundle exec rake test` and
+  `rake test:system` replace the rspec commands.
+
 ## 0.4.1 (2026-07-23)
 
 - The widget JavaScript moved from `app/assets/` to `lib/` (it was always

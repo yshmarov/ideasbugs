@@ -1,7 +1,7 @@
 ja:
   feedback_engine:
     button: "フィードバック"
-    title: "フィードバックを送信"
+    title: "バグ報告・機能リクエストを送信"
     kind: "種類"
     kinds:
       bug: "バグ報告"
