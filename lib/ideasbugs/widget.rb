@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'digest'
 
 module Ideasbugs
   # Serves the self-contained browser widget. The JavaScript is plain ES (no
   # framework, no build step) and styles itself inline, so it drops into any
-  # Rails app regardless of its CSS or JS setup. It is inlined into the page
-  # rather than served as a separate asset to avoid any dependency on the
-  # host's asset pipeline — and it lives under lib/ (not app/assets/) so a
-  # host that *does* run a pipeline never ingests it either: nothing lands in
-  # the host's asset namespace or precompiled output.
+  # Rails app regardless of its CSS or JS setup. It is served by the engine's
+  # own controller rather than through the host's asset pipeline, so there is
+  # no dependency on it — and it lives under lib/ (not app/assets/) so a host
+  # that *does* run a pipeline never ingests it either: nothing lands in the
+  # host's asset namespace or precompiled output.
   module Widget
     SOURCE = File.expand_path('widget.js', __dir__)
 
@@ -22,6 +23,13 @@ module Ideasbugs
         @javascript ||= File.read(SOURCE)
       end
 
+      # Content fingerprint for the cache-busting script URL: a changed file
+      # is a changed URL, so no browser can ever run stale widget code —
+      # Safari has been caught ignoring must-revalidate on same-URL scripts.
+      def fingerprint
+        @fingerprint ||= Digest::MD5.hexdigest(javascript)
+      end
+
       # The two <script> tags the helper renders.
       #
       # The config rides in a `type="application/json"` block: it is *data*,
@@ -29,8 +37,12 @@ module Ideasbugs
       # re-run it on a soft visit — which means it needs no CSP nonce and the
       # widget can re-read the *current* page's config on every `turbo:load`.
       #
-      # `nonce:` stamps only the widget script (the code), so it runs under a
-      # nonce-based Content-Security-Policy; pass nil when the app has no nonce.
+      # The code is a same-origin `src` script served by the engine — NOT
+      # inlined. Under a nonce-based CSP, Turbo Drive body swaps re-run body
+      # scripts against the *original* page's CSP header, so a fresh inline
+      # nonce gets refused; a same-origin src is covered by `'self'` on every
+      # visit. `nonce:` is still stamped for hosts whose script-src has no
+      # 'self'; pass nil when the app has no nonce.
       def snippet(endpoint:, locale:, nonce: nil)
         config = {
           endpoint: endpoint,
@@ -46,9 +58,10 @@ module Ideasbugs
         # Escape "</" so a value can't close the <script> block early.
         json = config.to_json.gsub('</', '<\/')
         nonce_attr = nonce ? %( nonce="#{nonce}") : ''
+        src = "#{Ideasbugs.config.mount_path.chomp('/')}/widget.js?v=#{fingerprint}"
 
         %(<script type="application/json" data-ideasbugs-config>#{json}</script>) +
-          %(<script data-ideasbugs-widget#{nonce_attr}>#{javascript}</script>)
+          %(<script src="#{src}" defer#{nonce_attr} data-ideasbugs-widget></script>)
       end
 
       private

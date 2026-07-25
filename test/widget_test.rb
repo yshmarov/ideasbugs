@@ -31,12 +31,22 @@ class WidgetTest < ActiveSupport::TestCase
     assert_equal false, config['rtl']
   end
 
-  test 'stamps the nonce on the widget script only' do
+  test 'emits a fingerprinted same-origin src, with the nonce on the widget script only' do
     html = Ideasbugs::Widget.snippet(endpoint: '/x', locale: :en, nonce: 'abc123')
+    src = "/feedback/widget.js?v=#{Ideasbugs::Widget.fingerprint}"
 
-    assert_includes html, '<script data-ideasbugs-widget nonce="abc123">'
+    assert_includes html, %(<script src="#{src}" defer nonce="abc123" data-ideasbugs-widget></script>)
     assert_includes html, '<script type="application/json" data-ideasbugs-config>'
     assert_not_includes html, 'data-ideasbugs-config nonce'
+  end
+
+  test 'builds the script src from the configured mount path, without the nonce attribute when nil' do
+    Ideasbugs.config.mount_path = '/support/'
+
+    html = Ideasbugs::Widget.snippet(endpoint: '/x', locale: :en)
+    src = "/support/widget.js?v=#{Ideasbugs::Widget.fingerprint}"
+
+    assert_includes html, %(<script src="#{src}" defer data-ideasbugs-widget></script>)
   end
 
   test 'escapes </ so config values cannot close the script block' do

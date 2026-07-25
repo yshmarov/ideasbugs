@@ -1,0 +1,26 @@
+# frozen_string_literal: true
+
+module Ideasbugs
+  # Serves the widget JavaScript as a plain same-origin script. Same-origin
+  # matters: under a `script-src 'self'` (or nonce-based) CSP, an external
+  # script from the app's own host is always allowed — including when Turbo
+  # Drive swaps the <body> and re-runs body scripts under the *original*
+  # page's CSP header, where a freshly minted inline nonce would be refused.
+  class WidgetsController < ApplicationController
+    # The script is static and carries no user data; without this, Rails'
+    # cross-origin JavaScript guard refuses to serve it to a plain
+    # <script src> request.
+    skip_forgery_protection
+
+    # The script URL carries a content fingerprint (?v=<md5>), so stale code
+    # is structurally impossible: new code means a new URL. The canonical
+    # fingerprinted URL is immutable and gets long-lived caching; anything
+    # else only ETag-revalidates.
+    def show
+      expires_in 1.year, public: true if params[:v] == Widget.fingerprint
+      return unless stale?(etag: [Ideasbugs::VERSION, Widget.fingerprint])
+
+      render plain: Widget.javascript, content_type: 'text/javascript'
+    end
+  end
+end

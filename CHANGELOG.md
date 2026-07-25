@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.5.2 (2026-07-25)
+
+- **Fixed: the widget went dead after Turbo Drive navigations under a
+  nonce-based CSP.** The widget code used to be inlined as a nonce'd
+  `<script>` block. Turbo Drive soft visits swap the `<body>` and re-execute
+  body scripts against the *original* page's CSP header, so the freshly
+  minted inline nonce was refused and the widget never booted — until the
+  user hard-reloaded. The code is now served by the engine as a same-origin,
+  content-fingerprinted script (`<mount_path>/widget.js?v=<md5>`), which
+  `script-src 'self'` covers on every visit, first or soft. The fingerprinted
+  URL is immutable (new code means a new URL) and is cached publicly for a
+  year; any other `?v` only ETag-revalidates. The `nonce` attribute is still
+  stamped on the tag for hosts whose `script-src` has no `'self'`. The config
+  `type="application/json"` block is unchanged and stays inline — it is data,
+  not code, and needs no nonce.
+
 ## 0.5.1 (2026-07-25)
 
 - The widget dialog is now full-screen on mobile (≤ 480px): edge-to-edge,
