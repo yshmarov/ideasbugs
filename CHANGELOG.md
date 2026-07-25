@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.3 (2026-07-25)
+
+- The widget's dynamic messages are now announced to screen readers: the
+  validation/save error paragraph is a `role="alert"` region created before
+  any text lands in it, and the post-submit thanks note is an
+  `aria-live="polite"` status region inserted empty and then filled, so the
+  announcement actually fires.
+- The page behind the open widget dialog no longer scrolls: opening the
+  dialog locks `<html>` overflow and closing it restores the previous value.
+  Because the lock lives on `<html>` (which survives Turbo body swaps), the
+  per-visit render step also releases a stale lock whenever the overlay is
+  no longer in the DOM.
+
 ## 0.5.2 (2026-07-25)
 
 - **Fixed: the widget went dead after Turbo Drive navigations under a
