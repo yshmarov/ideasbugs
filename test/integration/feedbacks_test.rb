@@ -19,7 +19,7 @@ class FeedbacksTest < ActionDispatch::IntegrationTest
 
     assert_response :created
 
-    feedback = FeedbackEngine::Feedback.last
+    feedback = Ideasbugs::Feedback.last
 
     assert_equal 'bug', feedback.kind
     assert_equal 'Billing', feedback.section
@@ -31,11 +31,11 @@ class FeedbacksTest < ActionDispatch::IntegrationTest
 
   test 'attributes the author via the configured hooks' do
     user = Struct.new(:id, :email).new(42, 'user@example.com')
-    FeedbackEngine.config.current_user = ->(_request) { user }
+    Ideasbugs.config.current_user = ->(_request) { user }
 
     post '/feedback/feedbacks', params: { feedback: { kind: 'other', message: 'Hello' } }
 
-    feedback = FeedbackEngine::Feedback.last
+    feedback = Ideasbugs::Feedback.last
 
     assert_equal '42', feedback.author_id
     assert_equal 'user@example.com', feedback.author_label
@@ -43,7 +43,7 @@ class FeedbacksTest < ActionDispatch::IntegrationTest
 
   test 'calls the on_submit hook' do
     submitted = []
-    FeedbackEngine.config.on_submit = ->(feedback) { submitted << feedback }
+    Ideasbugs.config.on_submit = ->(feedback) { submitted << feedback }
 
     post '/feedback/feedbacks', params: { feedback: { kind: 'other', message: 'Hello' } }
 
@@ -51,12 +51,12 @@ class FeedbacksTest < ActionDispatch::IntegrationTest
   end
 
   test 'still accepts the submission when the on_submit hook raises' do
-    FeedbackEngine.config.on_submit = ->(_feedback) { raise 'host mailer exploded' }
+    Ideasbugs.config.on_submit = ->(_feedback) { raise 'host mailer exploded' }
 
     post '/feedback/feedbacks', params: { feedback: { kind: 'other', message: 'Hello' } }
 
     assert_response :created
-    assert_equal 1, FeedbackEngine::Feedback.count
+    assert_equal 1, Ideasbugs::Feedback.count
   end
 
   test 'rejects a blank message' do
@@ -64,7 +64,7 @@ class FeedbacksTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert response.parsed_body['errors'].present?
-    assert_equal 0, FeedbackEngine::Feedback.count
+    assert_equal 0, Ideasbugs::Feedback.count
   end
 
   test 'rejects an unknown kind' do
@@ -74,7 +74,7 @@ class FeedbacksTest < ActionDispatch::IntegrationTest
   end
 
   test 'throttles a flood of submissions per IP' do
-    skip 'rate_limit requires Rails 7.2+' unless FeedbackEngine::FeedbacksController.respond_to?(:rate_limit)
+    skip 'rate_limit requires Rails 7.2+' unless Ideasbugs::FeedbacksController.respond_to?(:rate_limit)
 
     10.times do |i|
       post '/feedback/feedbacks', params: { feedback: { kind: 'bug', message: "Flood #{i}" } }
@@ -86,16 +86,16 @@ class FeedbacksTest < ActionDispatch::IntegrationTest
 
     assert_response :too_many_requests
     assert_includes response.parsed_body['errors'].first, 'Too many submissions'
-    assert_equal 10, FeedbackEngine::Feedback.count
+    assert_equal 10, Ideasbugs::Feedback.count
   end
 
   test 'is forbidden when the gate says no' do
-    FeedbackEngine.config.enabled = ->(_request) { false }
+    Ideasbugs.config.enabled = ->(_request) { false }
 
     post '/feedback/feedbacks', params: { feedback: { kind: 'bug', message: 'It broke' } }
 
     assert_response :forbidden
-    assert_equal 0, FeedbackEngine::Feedback.count
+    assert_equal 0, Ideasbugs::Feedback.count
   end
 
   test 'attaches uploaded images' do
@@ -103,21 +103,21 @@ class FeedbacksTest < ActionDispatch::IntegrationTest
          params: { feedback: { kind: 'bug', message: 'See attached', screenshots: [png] } }
 
     assert_response :created
-    assert_equal 1, FeedbackEngine::Feedback.last.screenshots.count
+    assert_equal 1, Ideasbugs::Feedback.last.screenshots.count
   end
 
   test 'rejects more screenshots than allowed' do
-    FeedbackEngine.config.max_screenshots = 1
+    Ideasbugs.config.max_screenshots = 1
 
     post '/feedback/feedbacks',
          params: { feedback: { kind: 'bug', message: 'Two shots', screenshots: [png, png] } }
 
     assert_response :unprocessable_entity
-    assert_equal 0, FeedbackEngine::Feedback.count
+    assert_equal 0, Ideasbugs::Feedback.count
   end
 
   test 'rejects oversized screenshots' do
-    FeedbackEngine.config.max_screenshot_size = 10
+    Ideasbugs.config.max_screenshot_size = 10
 
     post '/feedback/feedbacks',
          params: { feedback: { kind: 'bug', message: 'Big shot', screenshots: [png] } }
@@ -133,7 +133,7 @@ class FeedbacksTest < ActionDispatch::IntegrationTest
   end
 
   test 'rejects uploads when screenshots are disabled' do
-    FeedbackEngine.config.screenshots = false
+    Ideasbugs.config.screenshots = false
 
     post '/feedback/feedbacks',
          params: { feedback: { kind: 'bug', message: 'Shot', screenshots: [png] } }
@@ -142,7 +142,7 @@ class FeedbacksTest < ActionDispatch::IntegrationTest
   end
 
   test 'still accepts feedback without screenshots when disabled' do
-    FeedbackEngine.config.screenshots = false
+    Ideasbugs.config.screenshots = false
 
     post '/feedback/feedbacks', params: { feedback: { kind: 'bug', message: 'No shot' } }
 

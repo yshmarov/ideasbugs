@@ -6,13 +6,13 @@ class WidgetSystemTest < ApplicationSystemTestCase
   test 'submits feedback end to end, with a screenshot' do
     visit '/sample'
 
-    find('#fbe-button').click
-    assert_selector '#fbe-dialog'
+    find('#idb-button').click
+    assert_selector '#idb-dialog'
 
     # Client-side validation first: an empty message never leaves the browser.
     click_button 'Send feedback'
     assert_text 'Please enter a message.'
-    assert_equal 0, FeedbackEngine::Feedback.count
+    assert_equal 0, Ideasbugs::Feedback.count
 
     select 'Feature request', from: 'Type'
     fill_in 'Your message', with: 'Love it, but add dark mode'
@@ -21,7 +21,7 @@ class WidgetSystemTest < ApplicationSystemTestCase
     click_button 'Send feedback'
     assert_text 'Thanks for your feedback!'
 
-    feedback = FeedbackEngine::Feedback.last
+    feedback = Ideasbugs::Feedback.last
 
     assert_equal 'feature', feedback.kind
     assert_equal 'Love it, but add dark mode', feedback.message
@@ -30,65 +30,65 @@ class WidgetSystemTest < ApplicationSystemTestCase
   end
 
   test 'shows the section select when sections are configured' do
-    FeedbackEngine.config.sections = %w[Billing Reports]
+    Ideasbugs.config.sections = %w[Billing Reports]
     visit '/sample'
 
-    find('#fbe-button').click
+    find('#idb-button').click
     select 'Billing', from: 'Section'
     fill_in 'Your message', with: 'Billing is confusing'
     click_button 'Send feedback'
 
     assert_text 'Thanks for your feedback!'
-    assert_equal 'Billing', FeedbackEngine::Feedback.last.section
+    assert_equal 'Billing', Ideasbugs::Feedback.last.section
   end
 
   test 'closes on Escape without submitting' do
     visit '/sample'
 
-    find('#fbe-button').click
+    find('#idb-button').click
     fill_in 'Your message', with: 'Nearly sent'
     page.driver.browser.action.send_keys(:escape).perform
 
-    assert_no_selector '#fbe-dialog'
-    assert_equal 0, FeedbackEngine::Feedback.count
+    assert_no_selector '#idb-dialog'
+    assert_equal 0, Ideasbugs::Feedback.count
   end
 
-  test 'opens from a host element carrying data-feedback-engine-open' do
+  test 'opens from a host element carrying data-ideasbugs-open' do
     visit '/sample'
 
     find('#custom-opener').click
 
-    assert_selector '#fbe-dialog'
+    assert_selector '#idb-dialog'
   end
 
   test 'hides the floating button when show_button is off, custom trigger still works' do
-    FeedbackEngine.config.show_button = false
+    Ideasbugs.config.show_button = false
     visit '/sample'
 
-    assert_no_selector '#fbe-button'
+    assert_no_selector '#idb-button'
     find('#custom-opener').click
-    assert_selector '#fbe-dialog'
+    assert_selector '#idb-dialog'
   end
 
   test 'keeps Tab focus inside the dialog' do
     visit '/sample'
 
-    find('#fbe-button').click
-    find('#fbe-dialog .fbe-primary').send_keys(:tab)
+    find('#idb-button').click
+    find('#idb-dialog .idb-primary').send_keys(:tab)
 
-    assert page.evaluate_script('document.activeElement.closest("#fbe-dialog") !== null')
+    assert page.evaluate_script('document.activeElement.closest("#idb-dialog") !== null')
   end
 
   test 'rejects oversized files in the browser before uploading' do
-    FeedbackEngine.config.max_screenshot_size = 10
+    Ideasbugs.config.max_screenshot_size = 10
     visit '/sample'
 
-    find('#fbe-button').click
+    find('#idb-button').click
     fill_in 'Your message', with: 'Big file'
     attach_file 'Screenshots', file_fixture('tiny.png')
     click_button 'Send feedback'
 
     assert_text 'A screenshot is too large'
-    assert_equal 0, FeedbackEngine::Feedback.count
+    assert_equal 0, Ideasbugs::Feedback.count
   end
 end

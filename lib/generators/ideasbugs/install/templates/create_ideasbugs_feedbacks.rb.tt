@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+class CreateIdeasbugsFeedbacks < ActiveRecord::Migration<%= migration_version %>
+  def change
+    create_table :ideasbugs_feedbacks do |t|
+      t.string :kind, null: false, default: 'other'
+      t.string :section
+      t.text :message, null: false
+      t.string :status, null: false, default: 'open'
+      t.string :page_url
+      t.string :user_agent
+      t.string :author_id
+      t.string :author_label
+
+      t.timestamps
+    end
+
+    add_index :ideasbugs_feedbacks, :status
+    add_index :ideasbugs_feedbacks, :kind
+  end
+end

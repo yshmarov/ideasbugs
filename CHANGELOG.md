@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.5.0 (2026-07-25)
+
+**The gem is now `ideasbugs`** (formerly `feedback_engine`). Full rebrand:
+
+- Gem name `ideasbugs`, module `Ideasbugs`, repository
+  github.com/yshmarov/ideasbugs.
+- Table `ideasbugs_feedbacks` (was `feedback_engine_feedbacks`), helper
+  `ideasbugs_tag` (was `feedback_engine_tag`), I18n scope `ideasbugs.*`,
+  initializer `config/initializers/ideasbugs.rb`, generator
+  `ideasbugs:install`, widget data attributes `data-ideasbugs-*`.
+- **Upgrading from feedback_engine:** swap the gem in your Gemfile, rename
+  the initializer and its `FeedbackEngine` constants to `Ideasbugs`, update
+  the layout tag/trigger attributes, remount the engine, and migrate:
+
+  ```ruby
+  rename_table :feedback_engine_feedbacks, :ideasbugs_feedbacks
+  # Existing screenshot attachments keep working after:
+  # UPDATE active_storage_attachments SET record_type = 'Ideasbugs::Feedback'
+  #   WHERE record_type = 'FeedbackEngine::Feedback'
+  ```
+
+  Versions ≤ 0.4.2 remain published under the old name; entries below this
+  point describe releases made as `feedback_engine`.
+
 ## 0.4.2 (2026-07-25)
 
 - The default title CTA (`feedback_engine.title`, used as the modal heading

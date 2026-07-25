@@ -4,7 +4,7 @@ require 'test_helper'
 
 class DashboardTest < ActionDispatch::IntegrationTest
   def create_feedback(**attrs)
-    FeedbackEngine::Feedback.create!({ kind: 'bug', message: 'It broke' }.merge(attrs))
+    Ideasbugs::Feedback.create!({ kind: 'bug', message: 'It broke' }.merge(attrs))
   end
 
   def create_feedback_with_screenshot(**attrs)
@@ -18,7 +18,7 @@ class DashboardTest < ActionDispatch::IntegrationTest
   end
 
   def authorize_admin!
-    FeedbackEngine.config.authorize_admin = ->(_request) { true }
+    Ideasbugs.config.authorize_admin = ->(_request) { true }
   end
 
   # --- not authorized (the default outside development) ---------------------
@@ -160,6 +160,6 @@ class DashboardTest < ActionDispatch::IntegrationTest
     delete "/feedback/feedbacks/#{feedback.id}"
 
     assert_response :see_other
-    assert_not FeedbackEngine::Feedback.exists?(feedback.id)
+    assert_not Ideasbugs::Feedback.exists?(feedback.id)
   end
 end

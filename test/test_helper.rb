@@ -8,7 +8,7 @@ require 'rack/test'
 
 ActiveRecord::Schema.verbose = false
 ActiveRecord::Schema.define do
-  create_table :feedback_engine_feedbacks, force: true do |t|
+  create_table :ideasbugs_feedbacks, force: true do |t|
     t.string :kind, null: false, default: 'other'
     t.string :section
     t.text :message, null: false
@@ -19,8 +19,8 @@ ActiveRecord::Schema.define do
     t.string :author_label
     t.timestamps
   end
-  add_index :feedback_engine_feedbacks, :status
-  add_index :feedback_engine_feedbacks, :kind
+  add_index :ideasbugs_feedbacks, :status
+  add_index :ideasbugs_feedbacks, :kind
 
   # Active Storage tables, so screenshot attachments work in tests.
   create_table :active_storage_blobs, force: true do |t|
@@ -62,12 +62,12 @@ module ActiveSupport
     # leak into another under random order. The cache reset keeps the rate
     # limiter's per-IP counters from tripping later tests.
     setup do
-      FeedbackEngine.instance_variable_set(:@config, FeedbackEngine::Configuration.new)
+      Ideasbugs.instance_variable_set(:@config, Ideasbugs::Configuration.new)
       Rails.cache.clear
     end
 
     teardown do
-      FeedbackEngine.instance_variable_set(:@config, nil)
+      Ideasbugs.instance_variable_set(:@config, nil)
     end
   end
 end

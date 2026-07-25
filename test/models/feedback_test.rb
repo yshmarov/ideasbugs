@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-module FeedbackEngine
+module Ideasbugs
   class FeedbackTest < ActiveSupport::TestCase
     test 'is valid with a message and a known kind' do
       assert_predicate Feedback.new(kind: 'bug', message: 'It broke'), :valid?
@@ -20,7 +20,7 @@ module FeedbackEngine
     end
 
     test 'accepts kinds the host adds to the config' do
-      FeedbackEngine.config.kinds = %w[bug praise]
+      Ideasbugs.config.kinds = %w[bug praise]
 
       assert_predicate Feedback.new(kind: 'praise', message: 'Nice!'), :valid?
     end

@@ -1,0 +1,78 @@
+<h1><%= t('ideasbugs.dashboard.title', default: 'Feedback') %></h1>
+
+<div class="tabs">
+  <% Ideasbugs::Feedback::STATUSES.each do |status| %>
+    <%= link_to feedbacks_path(status: status, kind: @kind, q: @query),
+                class: ('active' if status == @status) do %>
+      <%= t("ideasbugs.statuses.#{status}", default: status.humanize) %>
+      <span class="count"><%= @counts.fetch(status, 0) %></span>
+    <% end %>
+  <% end %>
+</div>
+
+<form class="filters" method="get">
+  <input type="hidden" name="status" value="<%= @status %>">
+  <select name="kind" onchange="this.form.submit()">
+    <option value=""><%= t('ideasbugs.dashboard.all_kinds', default: 'All types') %></option>
+    <% Ideasbugs.config.kinds.each do |kind| %>
+      <option value="<%= kind %>" <%= 'selected' if kind.to_s == @kind %>>
+        <%= t("ideasbugs.kinds.#{kind}", default: kind.to_s.humanize) %>
+      </option>
+    <% end %>
+  </select>
+  <input type="search" name="q" value="<%= @query %>"
+         placeholder="<%= t('ideasbugs.dashboard.search_placeholder', default: 'Search message, author, section…') %>"
+         aria-label="<%= t('ideasbugs.dashboard.search', default: 'Search') %>">
+  <button><%= t('ideasbugs.dashboard.search', default: 'Search') %></button>
+</form>
+
+<div class="card">
+  <% if @feedbacks.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th><%= t('ideasbugs.kind', default: 'Type') %></th>
+          <th><%= t('ideasbugs.dashboard.message', default: 'Message') %></th>
+          <th><%= t('ideasbugs.section', default: 'Section') %></th>
+          <th><%= t('ideasbugs.dashboard.from', default: 'From') %></th>
+          <th><%= t('ideasbugs.dashboard.filed', default: 'Filed') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @feedbacks.each do |feedback| %>
+          <tr>
+            <td>
+              <span class="badge kind-<%= feedback.kind.to_s.parameterize %>">
+                <%= t("ideasbugs.kinds.#{feedback.kind}", default: feedback.kind.humanize) %>
+              </span>
+            </td>
+            <td>
+              <%= link_to truncate(feedback.message, length: 120), feedback_path(feedback) %>
+              <% if feedback.screenshots? %>
+                <div class="muted">📎 <%= feedback.screenshots.count %></div>
+              <% end %>
+            </td>
+            <td><%= feedback.section %></td>
+            <td><%= feedback.author_label %></td>
+            <td class="muted" title="<%= feedback.created_at %>">
+              <%= time_ago_in_words(feedback.created_at) %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty"><%= t('ideasbugs.dashboard.empty', default: 'Nothing here yet.') %></div>
+  <% end %>
+</div>
+
+<div class="pager">
+  <% if @page > 1 %>
+    <%= link_to t('ideasbugs.dashboard.newer', default: '← Newer'),
+                feedbacks_path(status: @status, kind: @kind, q: @query, page: @page - 1) %>
+  <% end %>
+  <% if @more %>
+    <%= link_to t('ideasbugs.dashboard.older', default: 'Older →'),
+                feedbacks_path(status: @status, kind: @kind, q: @query, page: @page + 1) %>
+  <% end %>
+</div>

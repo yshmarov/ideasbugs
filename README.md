@@ -1,13 +1,14 @@
-# feedback_engine
+# ideasbugs
 
-[![Gem Version](https://img.shields.io/gem/v/feedback_engine)](https://rubygems.org/gems/feedback_engine)
-[![Downloads](https://img.shields.io/gem/dt/feedback_engine)](https://rubygems.org/gems/feedback_engine)
-[![CI](https://github.com/yshmarov/feedback-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/yshmarov/feedback-engine/actions/workflows/ci.yml)
+[![Gem Version](https://img.shields.io/gem/v/ideasbugs)](https://rubygems.org/gems/ideasbugs)
+[![Downloads](https://img.shields.io/gem/dt/ideasbugs)](https://rubygems.org/gems/ideasbugs)
+[![CI](https://github.com/yshmarov/ideasbugs/actions/workflows/ci.yml/badge.svg)](https://github.com/yshmarov/ideasbugs/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](MIT-LICENSE)
 
-In-app product feedback collection for Rails.
+In-app product feedback collection for Rails. (Formerly published as
+`feedback_engine` — see the [CHANGELOG](CHANGELOG.md) for the rename notes.)
 
-`feedback_engine` adds a **"Send feedback"** widget to your app — bug reports,
+`ideasbugs` adds a **"Send feedback"** widget to your app — bug reports,
 feature requests, general comments, with optional screenshots — and stores
 every submission in your own database. A minimal built-in dashboard lets you
 browse and triage what users send. No third-party service, no data leaves your
@@ -30,20 +31,20 @@ these screenshots are the same pages in light and dark mode.
 
 Hosted feedback tools are great until you notice the trade: your users'
 feedback lives in someone else's database, behind someone else's login, at a
-per-seat price. `feedback_engine` keeps the core loop — collect, triage,
+per-seat price. `ideasbugs` keeps the core loop — collect, triage,
 resolve — inside your app: **your database, your users, your auth, one gem.**
 Attribution plugs into whatever authentication you already have, gating is a
 lambda, and submissions are ordinary ActiveRecord rows you can query, export,
 or wire into Slack. (A public voting board à la Canny is on the
-[roadmap](https://github.com/yshmarov/feedback-engine/issues/1).)
+[roadmap](https://github.com/yshmarov/ideasbugs/issues/1).)
 
 - **Zero UI dependencies.** The widget is plain JavaScript and styles itself.
   No Tailwind, no Stimulus, no importmap, no build step. The dashboard renders
   its own styles too.
-- **One line in your layout.** `<%= feedback_engine_tag %>` and you're
+- **One line in your layout.** `<%= ideasbugs_tag %>` and you're
   collecting feedback.
 - **Trigger it your way.** Use the built-in floating button, or hide it and
-  open the form from any element with a `data-feedback-engine-open` attribute.
+  open the form from any element with a `data-ideasbugs-open` attribute.
 - **Screenshots included.** Users can attach up to 3 images (via Active
   Storage) — limits are configurable and enforced server-side.
 - **Pluggable gating and attribution.** You decide who can send feedback, who
@@ -57,12 +58,12 @@ or wire into Slack. (A public voting board à la Canny is on the
 
 ## How it works
 
-1. `feedback_engine_tag` renders a floating **Feedback** button (bottom-right).
+1. `ideasbugs_tag` renders a floating **Feedback** button (bottom-right).
 2. Clicking it opens a small self-styled modal: type (bug / feature / other),
    an optional section select, a message, and optional screenshots.
 3. The form `POST`s to the mounted engine with the page URL, the user agent,
    and (if you configure it) the current user — stored in the
-   `feedback_engine_feedbacks` table.
+   `ideasbugs_feedbacks` table.
 4. You browse and triage submissions at the mount path (`/feedback`): status
    tabs (open → in review → resolved), type filter, search, screenshots
    inline.
@@ -77,29 +78,29 @@ or wire into Slack. (A public voting board à la Canny is on the
 
 ```ruby
 # Gemfile
-gem "feedback_engine"
+gem "ideasbugs"
 ```
 
 ```bash
 bundle install
-bin/rails generate feedback_engine:install
+bin/rails generate ideasbugs:install
 bin/rails db:migrate
 ```
 
 The generator:
 
-- writes `config/initializers/feedback_engine.rb`,
-- creates the `feedback_engine_feedbacks` migration,
+- writes `config/initializers/ideasbugs.rb`,
+- creates the `ideasbugs_feedbacks` migration,
 - mounts the engine in `config/routes.rb`:
 
   ```ruby
-  mount FeedbackEngine::Engine => "/feedback"
+  mount Ideasbugs::Engine => "/feedback"
   ```
 
 Then add the widget to your layout, right before `</body>`:
 
 ```erb
-<%= feedback_engine_tag %>
+<%= ideasbugs_tag %>
 ```
 
 > The widget reads the CSRF token from `<meta name="csrf-token">`, which
@@ -114,8 +115,8 @@ access defaults to development only — see below).
 Everything is optional; the defaults work out of the box.
 
 ```ruby
-# config/initializers/feedback_engine.rb
-FeedbackEngine.configure do |config|
+# config/initializers/ideasbugs.rb
+Ideasbugs.configure do |config|
   # Who can send feedback. Return false to hide the widget and reject
   # submissions for this request. Defaults to everyone.
   config.enabled = ->(request) { true }
@@ -132,7 +133,7 @@ FeedbackEngine.configure do |config|
   config.author_label = ->(user) { user.try(:email) }
 
   # Feedback types users can pick from. Labels come from I18n
-  # (feedback_engine.kinds.<kind>).
+  # (ideasbugs.kinds.<kind>).
   config.kinds = %w[bug feature other]
 
   # App areas shown as a select in the widget. Empty list hides the select.
@@ -164,28 +165,28 @@ end
 
 ### Opening the form from your own UI
 
-Prefer a nav item over the floating button? Add `data-feedback-engine-open` to
+Prefer a nav item over the floating button? Add `data-ideasbugs-open` to
 any element and (optionally) hide the button:
 
 ```ruby
 config.show_button = false # optional
 ```
 
-Gate the trigger with the same check the widget uses — `feedback_engine_tag`
+Gate the trigger with the same check the widget uses — `ideasbugs_tag`
 renders nothing when `config.enabled` rejects the request, so an unguarded
 trigger would be a dead button for those users. The gem ships a
-`feedback_engine.title` label ("Send bug/feature request") in every bundled language, so
+`ideasbugs.title` label ("Send bug/feature request") in every bundled language, so
 a localized trigger needs no keys of your own:
 
 ```erb
-<% if FeedbackEngine.enabled?(request) %>
-  <button data-feedback-engine-open><%= t("feedback_engine.title") %></button>
+<% if Ideasbugs.enabled?(request) %>
+  <button data-ideasbugs-open><%= t("ideasbugs.title") %></button>
 <% end %>
 ```
 
 ### Loading the widget only where it's used
 
-`feedback_engine_tag` in the layout puts the widget on every page. If your
+`ideasbugs_tag` in the layout puts the widget on every page. If your
 only trigger lives on one page, render the tag on that page instead — for
 example into the layout's `<head>` via `content_for`:
 
@@ -197,13 +198,13 @@ example into the layout's `<head>` via `content_for`:
 </head>
 
 <%# app/views/users/show.html.erb — the page with the trigger %>
-<% content_for :head, feedback_engine_tag %>
+<% content_for :head, ideasbugs_tag %>
 ```
 
 This is Turbo-safe: the script installs its document-level listeners once per
 session and re-renders on `turbo:load` (see [Turbo](#turbo)), whether it
 arrives on the first page load or a later visit. The trade-off: a
-`data-feedback-engine-open` element on a page that never rendered the tag
+`data-ideasbugs-open` element on a page that never rendered the tag
 silently does nothing — if triggers may appear on several pages, keep the tag
 in the layout.
 
@@ -226,7 +227,7 @@ applies on top):
 
 ```ruby
 authenticate :user, ->(user) { user.admin? } do
-  mount FeedbackEngine::Engine => "/feedback"
+  mount Ideasbugs::Engine => "/feedback"
 end
 ```
 
@@ -250,7 +251,7 @@ end
 
 ### Localizing the widget
 
-Every string resolves through Rails I18n under the `feedback_engine.*` scope
+Every string resolves through Rails I18n under the `ideasbugs.*` scope
 and follows the current `I18n.locale`. Missing keys fall back to English. To
 add a language or reword the bundled copy, define the keys in your own locale
 files (yours win over the gem's):
@@ -258,17 +259,17 @@ files (yours win over the gem's):
 ```yaml
 # config/locales/nl.yml
 nl:
-  feedback_engine:
+  ideasbugs:
     button: "Feedback"
     title: "Feedback versturen"
     kinds:
       bug: "Fout melden"
       feature: "Functie aanvragen"
       other: "Overig"
-    # …see config/locales/feedback_engine.en.yml for the full key list
+    # …see config/locales/ideasbugs.en.yml for the full key list
 ```
 
-Custom kinds get their labels the same way (`feedback_engine.kinds.<kind>`),
+Custom kinds get their labels the same way (`ideasbugs.kinds.<kind>`),
 falling back to `kind.humanize`.
 
 ### Light / dark / system appearance
@@ -281,7 +282,7 @@ Both the widget and the dashboard follow the operating-system appearance via
 Submissions are ordinary records:
 
 ```ruby
-FeedbackEngine::Feedback.where(status: "open").newest_first.each do |feedback|
+Ideasbugs::Feedback.where(status: "open").newest_first.each do |feedback|
   puts "[#{feedback.kind}] #{feedback.message} — #{feedback.author_label}"
 end
 ```

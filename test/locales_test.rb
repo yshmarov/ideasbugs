@@ -22,26 +22,26 @@ class LocalesTest < ActiveSupport::TestCase
   }.freeze
 
   test 'ships at least the six original languages' do
-    locales = LOCALE_FILES.map { |f| File.basename(f)[/feedback_engine\.(.+)\.yml/, 1] }
+    locales = LOCALE_FILES.map { |f| File.basename(f)[/ideasbugs\.(.+)\.yml/, 1] }
 
     assert_operator locales.to_set, :>=, %w[en es fr de pt uk].to_set
   end
 
   LOCALE_FILES.each do |file|
-    locale = File.basename(file)[/feedback_engine\.(.+)\.yml/, 1]
+    locale = File.basename(file)[/ideasbugs\.(.+)\.yml/, 1]
 
     test "#{locale} has a single root key and every widget key" do
       yaml = YAML.safe_load_file(file)
 
       assert_equal [locale], yaml.keys
-      data = yaml.fetch(locale).fetch('feedback_engine')
+      data = yaml.fetch(locale).fetch('ideasbugs')
       missing = WIDGET_KEYS - flatten_keys(data)
 
       assert_empty missing, "#{locale} is missing #{missing.join(', ')}"
     end
 
     test "#{locale} keeps the interpolation placeholders intact" do
-      data = YAML.safe_load_file(file).fetch(locale).fetch('feedback_engine')
+      data = YAML.safe_load_file(file).fetch(locale).fetch('ideasbugs')
       PLACEHOLDERS.each do |key, tokens|
         tokens.each do |token|
           assert_includes data.fetch(key), token, "#{locale}.#{key} is missing #{token}"
@@ -50,7 +50,7 @@ class LocalesTest < ActiveSupport::TestCase
     end
 
     test "#{locale} has no blank values" do
-      data = YAML.safe_load_file(file).fetch(locale).fetch('feedback_engine')
+      data = YAML.safe_load_file(file).fetch(locale).fetch('ideasbugs')
       values = data.values.flat_map { |v| v.is_a?(Hash) ? v.values : [v] }
       values.each do |value|
         assert_kind_of String, value
