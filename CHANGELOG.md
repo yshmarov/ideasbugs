@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.4 (2026-07-25)
+
+- Docs: show how to wire current_user with Rails 8's built-in authentication
+  (bin/rails generate authentication), alongside the existing Devise/Warden
+  example — in the README and the generated initializer.
+
 ## 0.5.3 (2026-07-25)
 
 - The widget's dynamic messages are now announced to screen readers: the

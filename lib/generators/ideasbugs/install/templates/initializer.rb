@@ -11,7 +11,14 @@ Ideasbugs.configure do |config|
 
   # Attribute feedback to a user (optional). Return an object responding to
   # #id, or nil. Receives the request.
+  # Devise / Warden:
   # config.current_user = ->(request) { request.env["warden"]&.user }
+  #
+  # Rails 8 built-in auth (bin/rails generate authentication):
+  # config.current_user = lambda do |request|
+  #   token = request.cookies["session_token"]
+  #   Session.find_signed(token)&.user if token
+  # end
 
   # Label stored for the author and shown in the dashboard.
   # config.author_label = ->(user) { user.try(:email) }
