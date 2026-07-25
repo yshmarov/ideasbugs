@@ -35,6 +35,11 @@ module Ideasbugs
       @feedbacks = scope.newest_first.offset((@page - 1) * PER_PAGE).limit(PER_PAGE + 1).to_a
       @more = @feedbacks.size > PER_PAGE
       @feedbacks = @feedbacks.first(PER_PAGE)
+
+      # Only surface the Section column when it can carry information: the host
+      # configured sections, or some record already has one (e.g. sections were
+      # configured historically). Otherwise it's a permanently blank column.
+      @show_section = Ideasbugs.config.sections.any? || @feedbacks.any? { |f| f.section.present? }
     end
 
     def show; end

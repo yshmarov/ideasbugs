@@ -97,6 +97,35 @@ class DashboardTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'A bug in review'
   end
 
+  test 'hides the Section column when no sections are configured or present' do
+    authorize_admin!
+    create_feedback(message: 'No section here')
+
+    get '/feedback'
+
+    assert_not_includes response.body, '<th>Section</th>'
+  end
+
+  test 'shows the Section column when sections are configured' do
+    authorize_admin!
+    Ideasbugs.config.sections = %w[Billing Reports]
+    create_feedback(message: 'No section, but configured')
+
+    get '/feedback'
+
+    assert_includes response.body, '<th>Section</th>'
+  end
+
+  test 'shows the Section column when a record has a section, even if unconfigured' do
+    authorize_admin!
+    create_feedback(message: 'Legacy section', section: 'Billing')
+
+    get '/feedback'
+
+    assert_includes response.body, '<th>Section</th>'
+    assert_includes response.body, 'Billing'
+  end
+
   test 'shows one feedback with its details' do
     authorize_admin!
     feedback = create_feedback(section: 'Billing', page_url: 'http://example.com/x',

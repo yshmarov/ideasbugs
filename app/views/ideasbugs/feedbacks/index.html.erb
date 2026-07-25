@@ -33,7 +33,9 @@
         <tr>
           <th><%= t('ideasbugs.kind', default: 'Type') %></th>
           <th><%= t('ideasbugs.dashboard.message', default: 'Message') %></th>
-          <th><%= t('ideasbugs.section', default: 'Section') %></th>
+          <% if @show_section %>
+            <th><%= t('ideasbugs.section', default: 'Section') %></th>
+          <% end %>
           <th><%= t('ideasbugs.dashboard.from', default: 'From') %></th>
           <th><%= t('ideasbugs.dashboard.filed', default: 'Filed') %></th>
         </tr>
@@ -52,7 +54,9 @@
                 <div class="muted">📎 <%= feedback.screenshots.count %></div>
               <% end %>
             </td>
-            <td><%= feedback.section %></td>
+            <% if @show_section %>
+              <td><%= feedback.section %></td>
+            <% end %>
             <td><%= feedback.author_label %></td>
             <td class="muted" title="<%= feedback.created_at %>">
               <%= time_ago_in_words(feedback.created_at) %>
