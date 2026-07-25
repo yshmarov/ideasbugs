@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.1 (2026-07-25)
+
+- The widget dialog is now full-screen on mobile (≤ 480px): edge-to-edge,
+  `100dvh` tall, no rounded corners.
+- Form controls render at 16px on mobile widths, so iOS no longer zooms the
+  page when an input gains focus.
+- The action row respects `env(safe-area-inset-bottom)`, keeping the buttons
+  above the home indicator on notched phones.
+- The dialog's scroll area uses `overscroll-behavior: contain`, so reaching
+  the end of the form no longer scrolls the page behind it.
+
 ## 0.5.0 (2026-07-25)
 
 **The gem is now `ideasbugs`** (formerly `feedback_engine`). Full rebrand:
