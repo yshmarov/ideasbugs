@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.6.0 (2026-07-26)
+
+- **Multi-tenancy.** Give each customer/tenant its own board — its own widget
+  submissions and its own triage dashboard — via one resolver:
+  `config.tenant = ->(request) { Current.organization&.to_gid&.to_s }`. The key
+  is an opaque string (GlobalID, id, subdomain, slug); the gem takes no foreign
+  key into your models, exactly like author attribution. Every submission is
+  stamped and the dashboard (plus screenshot access) scopes to the resolved
+  tenant. Authorization composes: `authorize_admin` says who's an admin,
+  `tenant` says which tenant, so a customer's admin sees only their own — and a
+  cross-tenant id 404s instead of leaking.
+- Optional `has_feedback` model concern (veneer over the string key, no new
+  coupling): `customer.feedback.open` — plus `Ideasbugs.for(record)`.
+- **Single-tenant apps are unchanged** — `config.tenant` defaults to nil, one
+  global board. Upgrading: the `tenant` column is additive and nullable; run
+  `bin/rails generate ideasbugs:tenant && bin/rails db:migrate` (fresh installs
+  already include it). Existing rows keep a nil tenant.
+
 ## 0.5.5 (2026-07-25)
 
 - The dashboard's **Section** column now only appears when it carries

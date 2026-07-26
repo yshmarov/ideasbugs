@@ -17,6 +17,11 @@ module Ideasbugs
               presence: true,
               inclusion: { in: ->(_) { Ideasbugs.config.kinds.map(&:to_s) } }
 
+    # Multi-tenancy: everything is scoped to an opaque tenant key (nil = the
+    # single global board). Loose-coupled like author_id — a string, no FK
+    # into the host's tables. See Ideasbugs.config.tenant.
+    scope :for_tenant, ->(tenant) { where(tenant: tenant.presence) }
+
     scope :newest_first, -> { order(id: :desc) }
 
     STATUSES.each do |status|

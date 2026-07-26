@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+class AddTenantToIdeasbugsFeedbacks < ActiveRecord::Migration<%= migration_version %>
+  def change
+    add_column :ideasbugs_feedbacks, :tenant, :string
+    add_index :ideasbugs_feedbacks, %i[tenant status]
+  end
+end

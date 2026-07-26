@@ -302,9 +302,47 @@ end
 ```
 
 Each row stores `kind`, `section`, `message`, `status` (`open`, `in_review`,
-`resolved`), `page_url`, `user_agent`, and optional `author_id` /
-`author_label`. Screenshots are Active Storage attachments
+`resolved`), `page_url`, `user_agent`, an optional `tenant`, and optional
+`author_id` / `author_label`. Screenshots are Active Storage attachments
 (`feedback.screenshots`).
+
+## Multi-tenancy
+
+Give each customer/tenant its own board — its own widget submissions and its
+own triage dashboard — with one resolver:
+
+```ruby
+config.tenant = ->(request) { Current.organization&.to_gid&.to_s }
+```
+
+Return an **opaque key** — a GlobalID, an id, a subdomain, a slug. The gem
+never takes a foreign key into your models and never needs to know what a
+Customer is; it just stamps the key on each submission and scopes the dashboard
+(and screenshot access) to it. `nil` (the default) is a single global board —
+single-tenant apps need none of this and keep working unchanged.
+
+Authorization composes: your `authorize_admin` says *who* is an admin, the
+`tenant` resolver says *which* tenant they're in, so a customer's admin sees
+only their own board — and a cross-tenant id 404s.
+
+Optional model sugar — a veneer over the string key, not a new coupling:
+
+```ruby
+class Customer < ApplicationRecord
+  has_feedback                       # keyed by to_gid.to_s (match config.tenant)
+end
+
+customer.feedback.open               # a normal Active Record relation
+```
+
+Apps that skip the concern still get full multi-tenancy from the resolver
+alone. Key by something other than GlobalID? Pass a matching resolver to both:
+`has_feedback(key: ->(c){ c.subdomain })` and the same in `config.tenant`.
+
+**Upgrading an existing install:** the `tenant` column is additive and
+nullable. Run `bin/rails generate ideasbugs:tenant && bin/rails db:migrate`
+(a fresh install already includes it). Existing rows keep a `nil` tenant — the
+global board — so nothing changes until you set `config.tenant`.
 
 ## Security
 

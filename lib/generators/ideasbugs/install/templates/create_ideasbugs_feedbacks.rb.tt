@@ -11,11 +11,13 @@ class CreateIdeasbugsFeedbacks < ActiveRecord::Migration<%= migration_version %>
       t.string :user_agent
       t.string :author_id
       t.string :author_label
+      t.string :tenant # opaque per-tenant key; nil = single global board
 
       t.timestamps
     end
 
     add_index :ideasbugs_feedbacks, :status
     add_index :ideasbugs_feedbacks, :kind
+    add_index :ideasbugs_feedbacks, %i[tenant status]
   end
 end

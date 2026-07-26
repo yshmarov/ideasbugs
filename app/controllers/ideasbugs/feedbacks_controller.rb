@@ -26,9 +26,9 @@ module Ideasbugs
       @status = Feedback::STATUSES.include?(params[:status]) ? params[:status] : 'open'
       @kind = Ideasbugs.config.kinds.map(&:to_s).include?(params[:kind]) ? params[:kind] : nil
       @query = params[:q].to_s.strip.presence
-      @counts = Feedback.group(:status).count
+      @counts = tenant_scope.group(:status).count
 
-      scope = Feedback.where(status: @status)
+      scope = tenant_scope.where(status: @status)
       scope = scope.where(kind: @kind) if @kind
       scope = search(scope) if @query
       @page = [params[:page].to_i, 1].max
@@ -47,6 +47,7 @@ module Ideasbugs
     def create
       feedback = Feedback.new(feedback_params)
       feedback.user_agent = request.user_agent
+      feedback.tenant = current_tenant
       attribute_author(feedback)
 
       error = attach_screenshots(feedback)
@@ -85,7 +86,13 @@ module Ideasbugs
     end
 
     def set_feedback
-      @feedback = Feedback.find(params[:id])
+      @feedback = tenant_scope.find(params[:id])
+    end
+
+    # Every dashboard query starts here, so an admin can only ever load,
+    # triage, or delete feedback in their own tenant — a cross-tenant id 404s.
+    def tenant_scope
+      Feedback.for_tenant(current_tenant)
     end
 
     # Case-insensitive match on the free-text columns. LOWER() keeps it

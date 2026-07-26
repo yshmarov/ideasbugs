@@ -23,6 +23,19 @@ Ideasbugs.configure do |config|
   # Label stored for the author and shown in the dashboard.
   # config.author_label = ->(user) { user.try(:email) }
 
+  # Multi-tenancy (optional). Give each customer/tenant its own board — its own
+  # widget submissions and its own triage dashboard. Return an opaque key
+  # (nil = one global board, the default). A GlobalID is the recommended key
+  # and matches the `has_feedback` model concern; an id, subdomain or slug work
+  # too. The gem never needs to know what your tenant is. An admin then sees
+  # only their tenant's board.
+  # config.tenant = ->(request) { Current.organization&.to_gid&.to_s }
+  #
+  # Then, optionally, `has_feedback` for `customer.feedback`:
+  #   class Customer < ApplicationRecord
+  #     has_feedback
+  #   end
+
   # Feedback types users can pick from. Labels come from I18n
   # (ideasbugs.kinds.<kind>).
   # config.kinds = %w[bug feature other]

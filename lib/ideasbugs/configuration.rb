@@ -20,6 +20,15 @@ module Ideasbugs
     # responding to #id, or nil. Receives the request.
     attr_accessor :current_user
 
+    # Resolve the current tenant (optional, for multi-tenant apps). Return an
+    # opaque key — a GlobalID, an id, a subdomain, a slug — or nil. Receives
+    # the request; shaped exactly like current_user/authorize_admin. nil (the
+    # default) is a single, global board: today's behavior, unchanged. Each
+    # submission is stamped with it and the dashboard scopes to it, so every
+    # tenant gets its own board. The recommended key is a GlobalID
+    # (`record.to_gid.to_s`), which also matches the `has_feedback` concern.
+    attr_accessor :tenant
+
     # Turn a resolved user into a short label stored alongside the feedback and
     # shown in the dashboard. Receives whatever #current_user returned.
     attr_accessor :author_label
@@ -67,6 +76,7 @@ module Ideasbugs
       @enabled = ->(_request) { true }
       @authorize_admin = ->(_request) { Rails.env.development? }
       @current_user = ->(_request) {}
+      @tenant = ->(_request) {}
       @author_label = ->(user) { user.respond_to?(:email) ? user.email : user&.to_s }
       @kinds = %w[bug feature other]
       @sections = []

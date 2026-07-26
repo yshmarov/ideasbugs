@@ -10,7 +10,8 @@ module Ideasbugs
     before_action :require_admin
 
     def show
-      screenshot = Feedback.find(params[:feedback_id]).screenshots.find(params[:id])
+      screenshot = Feedback.for_tenant(current_tenant)
+                           .find(params[:feedback_id]).screenshots.find(params[:id])
 
       send_data screenshot.download,
                 filename: screenshot.filename.to_s,

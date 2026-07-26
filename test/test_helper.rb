@@ -17,10 +17,12 @@ ActiveRecord::Schema.define do
     t.string :user_agent
     t.string :author_id
     t.string :author_label
+    t.string :tenant
     t.timestamps
   end
   add_index :ideasbugs_feedbacks, :status
   add_index :ideasbugs_feedbacks, :kind
+  add_index :ideasbugs_feedbacks, %i[tenant status]
 
   # Active Storage tables, so screenshot attachments work in tests.
   create_table :active_storage_blobs, force: true do |t|
