@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.7.0 (2026-07-27)
+
+- **Mobile keyboard-safe dialog.** On phones the full-screen dialog
+  (`height:100dvh`) no longer hides its actions row behind the on-screen
+  keyboard. iOS Safari raises the keyboard without resizing fixed `100dvh`
+  elements; the widget now pins `#idb-dialog` to the visible viewport via the
+  `visualViewport` API while the dialog is open and the `(max-width:480px)`
+  media query matches. Desktop and browsers without `visualViewport` are
+  unchanged (both are guarded no-ops). Shared UX fix across the gem family.
+- The type "Type" select is no longer auto-focused when the form opens.
+  Focusing a `<select>` on iOS immediately pops the native picker, which looked
+  broken on mount; the message textarea is focused instead. Tab still reaches
+  the select and the focus trap is unchanged, so keyboard access is preserved.
+
 ## 0.6.1 (2026-07-26)
 
 - The widget's injected stylesheet now refreshes when its content changes
