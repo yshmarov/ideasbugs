@@ -9,7 +9,11 @@ module Ideasbugs
     # as a scope name, and three statuses don't need the machinery anyway.
     STATUSES = %w[open in_review resolved].freeze
 
-    has_many_attached :screenshots if defined?(::ActiveStorage)
+    if defined?(::ActiveStorage)
+      # Read at class load, after the host's initializer has run. nil falls
+      # through to Active Storage's environment default service.
+      has_many_attached :screenshots, service: Ideasbugs.config.storage_service
+    end
 
     validates :message, presence: true
     validates :status, inclusion: { in: STATUSES }

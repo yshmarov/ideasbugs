@@ -47,6 +47,11 @@ Ideasbugs.configure do |config|
   # config.screenshots = true
   # config.max_screenshots = 3
   # config.max_screenshot_size = 5.megabytes
+  #
+  # Store screenshots on a specific Active Storage service from
+  # config/storage.yml, such as a dedicated bucket or folder. Default: your
+  # environment's default service.
+  # config.storage_service = :ideasbugs_uploads
 
   # Per-IP throttle for the submission endpoint (Rails 7.2+; ignored on 7.1).
   # Keyword arguments for Rails' rate limiter; nil disables throttling.

@@ -96,6 +96,7 @@ Everything is optional — a fresh install works with zero config. In
 | `screenshots`         | `true`                      | Allow uploads (needs Active Storage)                 |
 | `max_screenshots`     | `3`                         | Enforced server-side                                 |
 | `max_screenshot_size` | `5.megabytes`               | Enforced server-side                                 |
+| `storage_service`     | app default                 | Active Storage service for screenshots (`storage.yml` key) |
 | `rate_limit`          | `{ to: 10, within: 1.minute }` | Per-IP throttle (Rails 7.2+). `nil` disables      |
 | `show_button`         | `true`                      | The floating button. `false` to use your own trigger |
 | `button_label`        | `nil`                       | Fixed button text. `nil` uses the localized default  |

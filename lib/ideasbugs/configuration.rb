@@ -49,6 +49,10 @@ module Ideasbugs
     # Upload limits, enforced server-side and mirrored in the widget.
     attr_accessor :max_screenshots, :max_screenshot_size
 
+    # The Active Storage service that stores screenshots, as a service name
+    # from the host's config/storage.yml. nil uses the environment default.
+    attr_accessor :storage_service
+
     # Per-IP throttle for the public submission endpoint, as keyword arguments
     # for Rails' rate limiter (Rails 7.2+; ignored on 7.1). Read once when the
     # controller loads — set it in an initializer. nil disables throttling.
@@ -83,6 +87,7 @@ module Ideasbugs
       @screenshots = true
       @max_screenshots = 3
       @max_screenshot_size = 5 * 1024 * 1024
+      @storage_service = nil
       @rate_limit = { to: 10, within: 60 }
       @show_button = true
       @button_label = nil

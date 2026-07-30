@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- New `config.storage_service`: store screenshots on a named Active Storage
+  service from the host's `config/storage.yml` instead of the environment
+  default. Point it at a dedicated bucket, folder, or provider-specific service
+  entry to keep feedback screenshots separate from the rest of the app's media.
+  `nil` keeps today's behavior.
+
 ## 0.7.2 (2026-07-30)
 
 - Shipped the `IdeasBugs` admin dashboard title key in every bundled locale,
