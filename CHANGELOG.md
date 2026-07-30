@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.3 (2026-07-31)
 
 - Added `mount_ideasbugs at: "/feedback"` as the install-time route helper,
   keeping `config.mount_path` synchronized with the mounted engine path while
