@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Added `mount_ideasbugs at: "/feedback"` as the install-time route helper,
+  keeping `config.mount_path` synchronized with the mounted engine path while
+  preserving manual `mount Ideasbugs::Engine` compatibility.
+- Extracted the dashboard stylesheet into a same-origin, fingerprinted
+  `/dashboard.css` endpoint and added CSP meta tags to the dashboard layout.
+  The public widget remains pipeline-free and controller-served.
 - New `config.storage_service`: store screenshots on a named Active Storage
   service from the host's `config/storage.yml` instead of the environment
   default. Point it at a dedicated bucket, folder, or provider-specific service

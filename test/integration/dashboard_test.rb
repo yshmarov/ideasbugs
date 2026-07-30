@@ -66,8 +66,19 @@ class DashboardTest < ActionDispatch::IntegrationTest
     get '/feedback'
 
     assert_response :ok
+    assert_includes response.body, 'name="csp-nonce"'
+    assert_includes response.body, 'href="/feedback/dashboard.css?v='
+    assert_not_includes response.body, '<style>'
     assert_includes response.body, '<h1>IdeasBugs</h1>'
     assert_includes response.body, '<title>IdeasBugs</title>'
+  end
+
+  test 'serves the dashboard stylesheet as a same-origin static asset' do
+    get '/feedback/dashboard.css'
+
+    assert_response :ok
+    assert_equal 'text/css', response.media_type
+    assert_includes response.body, '.tabs'
   end
 
   test 'searches message, author, and section, case-insensitively' do

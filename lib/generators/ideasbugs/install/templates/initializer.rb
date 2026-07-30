@@ -64,7 +64,8 @@ Ideasbugs.configure do |config|
   # Fixed button text; leave nil to use the localized default.
   # config.button_label = nil
 
-  # Keep in sync with the `mount` in config/routes.rb.
+  # Default mount path used by `mount_ideasbugs`.
+  # Override only if you mount the engine manually.
   # config.mount_path = "/feedback"
 
   # Called with each saved feedback — notify Slack, send an email, etc.

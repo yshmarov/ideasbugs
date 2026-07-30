@@ -26,6 +26,16 @@ class IdeasbugsTest < ActiveSupport::TestCase
 
     assert_equal true, Ideasbugs.admin?(Object.new)
   end
+
+  test 'mount_ideasbugs keeps config.mount_path in sync with the route' do
+    routes = ActionDispatch::Routing::RouteSet.new
+
+    routes.draw do
+      mount_ideasbugs at: '/support'
+    end
+
+    assert_equal '/support', Ideasbugs.config.mount_path
+  end
 end
 
 class IdeasbugsConfigurationTest < ActiveSupport::TestCase

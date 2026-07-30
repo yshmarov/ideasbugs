@@ -17,5 +17,14 @@ module Ideasbugs
         extend Ideasbugs::HasFeedback
       end
     end
+
+    initializer 'ideasbugs.routing' do
+      ActionDispatch::Routing::Mapper.include(Module.new do
+        def mount_ideasbugs(at: Ideasbugs.config.mount_path, **options)
+          Ideasbugs.config.mount_path = at
+          mount Ideasbugs::Engine, at:, **options
+        end
+      end)
+    end
   end
 end

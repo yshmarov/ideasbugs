@@ -7,7 +7,7 @@ module Ideasbugs
   # Drive swaps the <body> and re-runs body scripts under the *original*
   # page's CSP header, where a freshly minted inline nonce would be refused.
   class WidgetsController < ApplicationController
-    # The script is static and carries no user data; without this, Rails'
+    # These assets are static and carry no user data; without this, Rails'
     # cross-origin JavaScript guard refuses to serve it to a plain
     # <script src> request.
     skip_forgery_protection
@@ -17,10 +17,20 @@ module Ideasbugs
     # fingerprinted URL is immutable and gets long-lived caching; anything
     # else only ETag-revalidates.
     def show
-      expires_in 1.year, public: true if params[:v] == Widget.fingerprint
-      return unless stale?(etag: [Ideasbugs::VERSION, Widget.fingerprint])
+      serve(Widget.javascript, Widget.fingerprint, 'text/javascript')
+    end
 
-      render plain: Widget.javascript, content_type: 'text/javascript'
+    def dashboard_stylesheet
+      serve(Widget.dashboard_stylesheet, Widget.dashboard_stylesheet_fingerprint, 'text/css')
+    end
+
+    private
+
+    def serve(source, fingerprint, content_type)
+      expires_in 1.year, public: true if params[:v] == fingerprint
+      return unless stale?(etag: [Ideasbugs::VERSION, fingerprint])
+
+      render plain: source, content_type: content_type
     end
   end
 end

@@ -13,6 +13,7 @@ module Ideasbugs
   # host's asset namespace or precompiled output.
   module Widget
     SOURCE = File.expand_path('widget.js', __dir__)
+    DASHBOARD_STYLESHEET_SOURCE = File.expand_path('dashboard.css', __dir__)
 
     # Right-to-left scripts, so the form renders mirrored for those locales.
     # Matched on the language subtag, so region variants ("ar-EG") count too.
@@ -23,11 +24,19 @@ module Ideasbugs
         @javascript ||= File.read(SOURCE)
       end
 
+      def dashboard_stylesheet
+        @dashboard_stylesheet ||= File.read(DASHBOARD_STYLESHEET_SOURCE)
+      end
+
       # Content fingerprint for the cache-busting script URL: a changed file
       # is a changed URL, so no browser can ever run stale widget code —
       # Safari has been caught ignoring must-revalidate on same-URL scripts.
       def fingerprint
         @fingerprint ||= Digest::MD5.hexdigest(javascript)
+      end
+
+      def dashboard_stylesheet_fingerprint
+        @dashboard_stylesheet_fingerprint ||= Digest::MD5.hexdigest(dashboard_stylesheet)
       end
 
       # The two <script> tags the helper renders.

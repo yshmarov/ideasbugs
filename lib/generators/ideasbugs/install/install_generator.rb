@@ -22,7 +22,7 @@ module Ideasbugs
       end
 
       def mount_engine
-        route %(mount Ideasbugs::Engine => "/feedback")
+        route %(mount_ideasbugs at: "/feedback")
       end
 
       def post_install
