@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.1 (2026-07-30)
+
+- Renamed the default admin dashboard title to `IdeasBugs` while keeping it
+  overridable through `ideasbugs.dashboard.title`.
+
 ## 0.7.0 (2026-07-27)
 
 - **Mobile keyboard-safe dialog.** On phones the full-screen dialog

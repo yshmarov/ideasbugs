@@ -60,6 +60,16 @@ class DashboardTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'Solved one'
   end
 
+  test 'dashboard title defaults to IdeasBugs' do
+    authorize_admin!
+
+    get '/feedback'
+
+    assert_response :ok
+    assert_includes response.body, '<h1>IdeasBugs</h1>'
+    assert_includes response.body, '<title>IdeasBugs</title>'
+  end
+
   test 'searches message, author, and section, case-insensitively' do
     authorize_admin!
     create_feedback(message: 'Dark mode please')

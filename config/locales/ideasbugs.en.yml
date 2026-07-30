@@ -27,7 +27,7 @@ en:
       in_review: "In review"
       resolved: "Resolved"
     dashboard:
-      title: "Feedback"
+      title: "IdeasBugs"
       all_kinds: "All types"
       filter: "Filter"
       message: "Message"
