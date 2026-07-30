@@ -22,3 +22,5 @@ pt:
     error_too_many: "Muitas capturas de tela (máx. %{count})."
     error_too_large: "Uma captura é grande demais (máx. %{size} MB)."
     error_rate_limited: "Envios demais. Aguarde um momento e tente novamente."
+    dashboard:
+      title: "IdeasBugs"

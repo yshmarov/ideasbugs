@@ -22,3 +22,5 @@ hr:
     error_too_many: "Previše snimki zaslona (najviše %{count})."
     error_too_large: "Snimka zaslona je prevelika (najviše %{size} MB)."
     error_rate_limited: "Previše slanja. Pričekajte trenutak i pokušajte ponovno."
+    dashboard:
+      title: "IdeasBugs"

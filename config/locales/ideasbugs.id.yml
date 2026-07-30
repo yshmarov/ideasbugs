@@ -22,3 +22,5 @@ id:
     error_too_many: "Terlalu banyak tangkapan layar (maks. %{count})."
     error_too_large: "Sebuah tangkapan layar terlalu besar (maks. %{size} MB)."
     error_rate_limited: "Terlalu banyak kiriman. Tunggu sebentar dan coba lagi."
+    dashboard:
+      title: "IdeasBugs"

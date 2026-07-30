@@ -6,13 +6,13 @@ require 'yaml'
 class LocalesTest < ActiveSupport::TestCase
   LOCALE_FILES = Dir[File.expand_path('../config/locales/*.yml', __dir__)]
 
-  # The widget keys every locale must ship. English additionally carries the
-  # dashboard keys (admin-facing; other locales fall back to English there).
+  # The widget keys every locale must ship, plus the branded admin dashboard
+  # title so translated installations do not fall back to a generic label.
   WIDGET_KEYS = %w[
     button title kind kinds.bug kinds.feature kinds.other section section_any
     message message_placeholder screenshots screenshots_hint submit cancel
     close thanks error_blank error_save error_too_many error_too_large
-    error_rate_limited
+    error_rate_limited dashboard.title
   ].freeze
 
   PLACEHOLDERS = {

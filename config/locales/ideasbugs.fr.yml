@@ -22,3 +22,5 @@ fr:
     error_too_many: "Trop de captures d'écran (max %{count})."
     error_too_large: "Une capture est trop volumineuse (max %{size} Mo)."
     error_rate_limited: "Trop d'envois. Veuillez patienter un instant et réessayer."
+    dashboard:
+      title: "IdeasBugs"

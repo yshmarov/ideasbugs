@@ -22,3 +22,5 @@ ko:
     error_too_many: "스크린샷이 너무 많습니다 (최대 %{count}개)."
     error_too_large: "스크린샷이 너무 큽니다 (최대 %{size} MB)."
     error_rate_limited: "제출이 너무 많습니다. 잠시 후 다시 시도해 주세요."
+    dashboard:
+      title: "IdeasBugs"

@@ -22,3 +22,5 @@ uk:
     error_too_many: "Забагато знімків екрана (макс. %{count})."
     error_too_large: "Знімок екрана завеликий (макс. %{size} МБ)."
     error_rate_limited: "Забагато надсилань. Зачекайте хвилинку та спробуйте ще раз."
+    dashboard:
+      title: "IdeasBugs"

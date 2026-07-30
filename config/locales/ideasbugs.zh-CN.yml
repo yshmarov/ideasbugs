@@ -22,3 +22,5 @@ zh-CN:
     error_too_many: "截图过多（最多 %{count} 张）。"
     error_too_large: "有一张截图过大（最多 %{size} MB）。"
     error_rate_limited: "提交过于频繁，请稍候再试。"
+    dashboard:
+      title: "IdeasBugs"

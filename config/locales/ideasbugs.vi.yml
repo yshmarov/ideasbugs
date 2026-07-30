@@ -22,3 +22,5 @@ vi:
     error_too_many: "Quá nhiều ảnh chụp màn hình (tối đa %{count})."
     error_too_large: "Một ảnh chụp màn hình quá lớn (tối đa %{size} MB)."
     error_rate_limited: "Gửi quá nhiều lần. Vui lòng đợi một lát rồi thử lại."
+    dashboard:
+      title: "IdeasBugs"

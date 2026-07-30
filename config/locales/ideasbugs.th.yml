@@ -22,3 +22,5 @@ th:
     error_too_many: "ภาพหน้าจอมากเกินไป (สูงสุด %{count})"
     error_too_large: "ภาพหน้าจอมีขนาดใหญ่เกินไป (สูงสุด %{size} MB)"
     error_rate_limited: "ส่งบ่อยเกินไป กรุณารอสักครู่แล้วลองอีกครั้ง"
+    dashboard:
+      title: "IdeasBugs"

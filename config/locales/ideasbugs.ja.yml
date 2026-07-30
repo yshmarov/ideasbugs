@@ -22,3 +22,5 @@ ja:
     error_too_many: "スクリーンショットが多すぎます（最大%{count}枚）。"
     error_too_large: "スクリーンショットが大きすぎます（最大%{size} MB）。"
     error_rate_limited: "送信回数が多すぎます。しばらく待ってからもう一度お試しください。"
+    dashboard:
+      title: "IdeasBugs"

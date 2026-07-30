@@ -22,3 +22,5 @@ it:
     error_too_many: "Troppi screenshot (max %{count})."
     error_too_large: "Uno screenshot è troppo grande (max %{size} MB)."
     error_rate_limited: "Troppi invii. Attendi un momento e riprova."
+    dashboard:
+      title: "IdeasBugs"

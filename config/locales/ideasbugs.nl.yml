@@ -22,3 +22,5 @@ nl:
     error_too_many: "Te veel schermafbeeldingen (max. %{count})."
     error_too_large: "Een schermafbeelding is te groot (max. %{size} MB)."
     error_rate_limited: "Te veel inzendingen. Wacht even en probeer het opnieuw."
+    dashboard:
+      title: "IdeasBugs"

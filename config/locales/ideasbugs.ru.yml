@@ -22,3 +22,5 @@ ru:
     error_too_many: "Слишком много скриншотов (макс. %{count})."
     error_too_large: "Скриншот слишком большой (макс. %{size} МБ)."
     error_rate_limited: "Слишком много отправок. Подождите немного и попробуйте ещё раз."
+    dashboard:
+      title: "IdeasBugs"

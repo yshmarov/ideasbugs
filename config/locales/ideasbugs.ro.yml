@@ -22,3 +22,5 @@ ro:
     error_too_many: "Prea multe capturi de ecran (max. %{count})."
     error_too_large: "O captură de ecran este prea mare (max. %{size} MB)."
     error_rate_limited: "Prea multe trimiteri. Așteaptă un moment și încearcă din nou."
+    dashboard:
+      title: "IdeasBugs"

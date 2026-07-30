@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.2 (2026-07-30)
+
+- Shipped the `IdeasBugs` admin dashboard title key in every bundled locale,
+  matching the brand-title default across translated installations.
+
 ## 0.7.1 (2026-07-30)
 
 - Renamed the default admin dashboard title to `IdeasBugs` while keeping it

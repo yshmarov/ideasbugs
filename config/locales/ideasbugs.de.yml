@@ -22,3 +22,5 @@ de:
     error_too_many: "Zu viele Screenshots (max. %{count})."
     error_too_large: "Ein Screenshot ist zu groß (max. %{size} MB)."
     error_rate_limited: "Zu viele Einsendungen. Bitte warten Sie einen Moment und versuchen Sie es erneut."
+    dashboard:
+      title: "IdeasBugs"

@@ -22,3 +22,5 @@ ur:
     error_too_many: "بہت زیادہ اسکرین شاٹس (زیادہ سے زیادہ %{count})۔"
     error_too_large: "ایک اسکرین شاٹ بہت بڑا ہے (زیادہ سے زیادہ %{size} MB)۔"
     error_rate_limited: "بہت زیادہ ارسالات۔ براہ کرم تھوڑا انتظار کریں اور دوبارہ کوشش کریں۔"
+    dashboard:
+      title: "IdeasBugs"

@@ -22,3 +22,5 @@ bg:
     error_too_many: "Твърде много екранни снимки (макс. %{count})."
     error_too_large: "Екранна снимка е твърде голяма (макс. %{size} MB)."
     error_rate_limited: "Твърде много изпращания. Изчакайте малко и опитайте отново."
+    dashboard:
+      title: "IdeasBugs"

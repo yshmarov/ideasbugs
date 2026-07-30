@@ -22,3 +22,5 @@ tr:
     error_too_many: "Çok fazla ekran görüntüsü (en fazla %{count})."
     error_too_large: "Bir ekran görüntüsü çok büyük (en fazla %{size} MB)."
     error_rate_limited: "Çok fazla gönderim. Lütfen biraz bekleyip tekrar deneyin."
+    dashboard:
+      title: "IdeasBugs"

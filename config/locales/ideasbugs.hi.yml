@@ -22,3 +22,5 @@ hi:
     error_too_many: "बहुत अधिक स्क्रीनशॉट (अधिकतम %{count})।"
     error_too_large: "एक स्क्रीनशॉट बहुत बड़ा है (अधिकतम %{size} MB)।"
     error_rate_limited: "बहुत अधिक सबमिशन। कृपया थोड़ी देर रुककर फिर से प्रयास करें।"
+    dashboard:
+      title: "IdeasBugs"

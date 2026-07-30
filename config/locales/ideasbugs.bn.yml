@@ -22,3 +22,5 @@ bn:
     error_too_many: "অতিরিক্ত স্ক্রিনশট (সর্বোচ্চ %{count}টি)।"
     error_too_large: "একটি স্ক্রিনশট খুব বড় (সর্বোচ্চ %{size} MB)।"
     error_rate_limited: "অনেক বেশি জমা হয়েছে। একটু অপেক্ষা করে আবার চেষ্টা করুন।"
+    dashboard:
+      title: "IdeasBugs"

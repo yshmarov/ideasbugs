@@ -22,3 +22,5 @@ el:
     error_too_many: "Πάρα πολλά στιγμιότυπα οθόνης (έως %{count})."
     error_too_large: "Ένα στιγμιότυπο οθόνης είναι πολύ μεγάλο (έως %{size} MB)."
     error_rate_limited: "Πάρα πολλές υποβολές. Περιμένετε λίγο και δοκιμάστε ξανά."
+    dashboard:
+      title: "IdeasBugs"
