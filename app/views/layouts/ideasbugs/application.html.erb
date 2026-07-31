@@ -8,7 +8,7 @@
   <%= stylesheet_link_tag "#{dashboard_stylesheet_path}?v=#{Ideasbugs::Widget.dashboard_stylesheet_fingerprint}",
                           'data-turbo-track': 'reload' %>
 </head>
-<body>
+<body class="<%= content_for?(:body_class) ? yield(:body_class) : '' %>">
   <div class="container">
     <%= yield %>
   </div>
