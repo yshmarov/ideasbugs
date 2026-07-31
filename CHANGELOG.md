@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.4 (2026-07-31)
+
+- Redesigned the admin feedback dashboard into a two-column triage layout with
+  status filters, a selected-record pane, and refreshed before/after
+  screenshots.
+- Kept standalone feedback show pages working independently, including
+  scrollable detail content on narrow screens.
+
 ## 0.7.3 (2026-07-31)
 
 - Added `mount_ideasbugs at: "/feedback"` as the install-time route helper,
