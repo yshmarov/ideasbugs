@@ -36,6 +36,8 @@ module Ideasbugs
       @more = @feedbacks.size > PER_PAGE
       @feedbacks = @feedbacks.first(PER_PAGE)
 
+      @selected_feedback = tenant_scope.find_by(id: params[:feedback_id]) if params[:feedback_id].present?
+
       # Only surface the Section column when it can carry information: the host
       # configured sections, or some record already has one (e.g. sections were
       # configured historically). Otherwise it's a permanently blank column.

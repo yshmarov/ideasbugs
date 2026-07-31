@@ -1,63 +1,8 @@
+<% content_for :body_class, 'ib-show' %>
+
 <div class="breadcrumb">
   <%= link_to t('ideasbugs.dashboard.title', default: 'IdeasBugs'), root_path %>
   / #<%= @feedback.id %>
 </div>
 
-<h1>
-  <span class="badge kind-<%= @feedback.kind.to_s.parameterize %>">
-    <%= t("ideasbugs.kinds.#{@feedback.kind}", default: @feedback.kind.humanize) %>
-  </span>
-  <span class="badge status-<%= @feedback.status %>">
-    <%= t("ideasbugs.statuses.#{@feedback.status}", default: @feedback.status.humanize) %>
-  </span>
-</h1>
-
-<div class="card" style="padding: 16px; margin-bottom: 16px;">
-  <p class="message"><%= @feedback.message %></p>
-
-  <% if @feedback.screenshots? %>
-    <div class="shots">
-      <% @feedback.screenshots.each do |screenshot| %>
-        <%= link_to feedback_screenshot_path(@feedback, screenshot.id), target: '_blank', rel: 'noopener' do %>
-          <%= image_tag feedback_screenshot_path(@feedback, screenshot.id), alt: screenshot.filename %>
-        <% end %>
-      <% end %>
-    </div>
-  <% end %>
-</div>
-
-<div class="card" style="padding: 16px;">
-  <dl>
-    <% if @feedback.section.present? %>
-      <dt><%= t('ideasbugs.section', default: 'Section') %></dt>
-      <dd><%= @feedback.section %></dd>
-    <% end %>
-    <% if @feedback.author_label.present? || @feedback.author_id.present? %>
-      <dt><%= t('ideasbugs.dashboard.from', default: 'From') %></dt>
-      <dd><%= @feedback.author_label.presence || "##{@feedback.author_id}" %></dd>
-    <% end %>
-    <% if @feedback.page_url.present? %>
-      <dt><%= t('ideasbugs.dashboard.page', default: 'Page') %></dt>
-      <dd><%= link_to @feedback.page_url, @feedback.page_url, target: '_blank', rel: 'noopener' %></dd>
-    <% end %>
-    <% if @feedback.user_agent.present? %>
-      <dt><%= t('ideasbugs.dashboard.browser', default: 'Browser') %></dt>
-      <dd class="muted"><%= @feedback.user_agent %></dd>
-    <% end %>
-    <dt><%= t('ideasbugs.dashboard.filed', default: 'Filed') %></dt>
-    <dd><%= @feedback.created_at %></dd>
-  </dl>
-</div>
-
-<div class="actions">
-  <% (Ideasbugs::Feedback::STATUSES - [@feedback.status]).each do |status| %>
-    <%= button_to t("ideasbugs.dashboard.move_to_#{status}", default: "Mark #{status.humanize.downcase}"),
-                  feedback_path(@feedback),
-                  method: :patch, params: { feedback: { status: status } },
-                  class: ('primary' if status == 'resolved') %>
-  <% end %>
-  <%= button_to t('ideasbugs.dashboard.delete', default: 'Delete'),
-                feedback_path(@feedback),
-                method: :delete, class: 'danger',
-                form: { onsubmit: "return confirm('#{t('ideasbugs.dashboard.delete_confirm', default: 'Delete this feedback?')}')" } %>
-</div>
+<%= render 'feedback_panel', feedback: @feedback %>

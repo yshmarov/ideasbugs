@@ -30,6 +30,7 @@
                       border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; }
     .filters input[type=search] { flex: 1; max-width: 320px; }
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .card.pad { padding: 16px; }
     table { width: 100%; border-collapse: collapse; }
     th, td { padding: 10px 14px; text-align: left; vertical-align: top; }
     th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
@@ -59,3 +60,83 @@
     .shots img { max-width: 280px; max-height: 200px; border: 1px solid var(--border); border-radius: 8px; }
     .empty { padding: 48px 16px; text-align: center; color: var(--muted); }
     .breadcrumb { margin-bottom: 12px; font-size: 13px; }
+    .case-id { color: var(--muted); font-weight: 400; font-size: 15px; }
+    .panel-head { flex: 0 0 auto; }
+    .panel-head h1 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .detail-scroll { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+    .feedback-panel { min-width: 0; display: flex; flex-direction: column; }
+    .feedback-panel .actions { flex: 0 0 auto; }
+
+    /* Desktop triage: list on the left, selected feedback on the right. */
+    .ib-index, .ib-index .container { height: 100vh; height: 100dvh; }
+    .ib-index { overflow: hidden; }
+    .ib-index .container { max-width: 1280px; display: flex; flex-direction: column; padding-bottom: 16px; }
+    .ib-index .container > h1 { flex: 0 0 auto; margin-bottom: 14px; }
+    .triage-shell { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(320px, 400px) 1fr;
+                    gap: 16px; }
+    .triage-sidebar { min-width: 0; min-height: 0; display: flex; flex-direction: column;
+                      background: var(--surface); border: 1px solid var(--border);
+                      border-radius: 8px; overflow: hidden; }
+    .triage-sidebar .tabs { flex: 0 0 auto; margin: 12px 12px 0; padding: 0; background: transparent;
+                            border: 0; border-radius: 0; gap: 6px; flex-wrap: nowrap; }
+    .triage-sidebar .tabs a { flex: 1 1 0; position: relative; display: flex; align-items: center;
+                              justify-content: center; gap: 6px; min-height: 34px; padding: 5px 10px 8px;
+                              border-radius: 8px; color: var(--muted); font-weight: 600; }
+    .triage-sidebar .tabs a.active { color: var(--text); border: 0; background: transparent; box-shadow: none; margin: 0; }
+    .triage-sidebar .tabs a.active::after { content: ""; position: absolute; left: 20px; right: 20px; bottom: 0;
+                                            height: 2px; border-radius: 999px; background: var(--accent); }
+    .triage-sidebar .tabs a:not(.active):hover { text-decoration: none; color: var(--text); background: var(--bg); }
+    .triage-sidebar .tabs .count { margin-left: 0; background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .triage-sidebar .tabs a.active .count { background: var(--border); }
+    .triage-sidebar .filters { flex: 0 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) auto;
+                               margin: 0; padding: 12px; border-bottom: 1px solid var(--border); }
+    .triage-sidebar .filters select { grid-column: 1 / -1; width: 100%; }
+    .triage-sidebar .filters input[type=search] { min-width: 0; max-width: none; }
+    .feedback-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+    .feedback-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 13px 14px;
+                    color: var(--text); border-bottom: 1px solid var(--border); }
+    .feedback-row:hover { text-decoration: none; background: var(--bg); }
+    .feedback-row.active { background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+                           box-shadow: inset 3px 0 0 var(--accent); }
+    .feedback-main { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+    .feedback-topline, .feedback-meta { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .feedback-message, .feedback-meta span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .feedback-message { display: block; font-weight: 600; }
+    .feedback-time { margin-left: auto; white-space: nowrap; }
+    .attachment-count { align-self: start; white-space: nowrap; }
+    .triage-sidebar .pager { flex: 0 0 auto; margin: 0; padding: 10px 12px; border-top: 1px solid var(--border); }
+    .triage-detail { min-width: 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+    .triage-detail .feedback-panel { flex: 1 1 auto; min-height: 0; }
+    .triage-detail .detail-scroll { flex: 1 1 auto; overflow-y: auto; padding-right: 2px; }
+    .triage-detail .actions { margin-bottom: 0; }
+    .empty-state { margin: auto; max-width: 320px; padding: 24px; text-align: center; }
+    .empty-state h2 { margin: 0 0 6px; font-size: 18px; }
+    .empty-state p { margin: 0; }
+    .mobile-back { display: none; }
+
+    /* Standalone show pages keep normal page scrolling. */
+    .ib-show { min-height: 100vh; overflow: auto; }
+    .ib-show .feedback-panel { gap: 0; }
+    .ib-show .detail-scroll { overflow: visible; }
+    @media (max-width: 760px) {
+      body { font-size: 14px; }
+      .container { padding: 14px 10px 24px; }
+      .ib-index, .ib-show { overflow-x: hidden; }
+      .feedback-panel, .detail-scroll, .card, dl, dd { min-width: 0; max-width: 100%; }
+      .feedback-panel .card { width: calc(100vw - 20px); }
+      .message, dd, .muted { max-width: calc(100vw - 54px); }
+      .ib-index { overflow-y: auto; overflow-x: hidden; }
+      .ib-index, .ib-index .container { min-height: 100vh; height: auto; }
+      .ib-index .container { padding-bottom: 10px; }
+      .triage-shell { display: block; min-height: calc(100vh - 62px); }
+      .triage-sidebar, .triage-detail { min-height: calc(100vh - 62px); }
+      .triage-shell.has-selected .triage-sidebar { display: none; }
+      .triage-shell:not(.has-selected) .triage-detail { display: none; }
+      .feedback-list { overflow: visible; }
+      .feedback-row { padding: 12px; }
+      .feedback-meta { display: none; }
+      .triage-detail .feedback-panel { min-height: calc(100vh - 64px); }
+      .mobile-back { display: block; flex: 0 0 auto; margin: 10px 10px 0; font-size: 13px; }
+      .panel-head h1 { font-size: 18px; }
+      dl { grid-template-columns: 1fr; gap: 3px; }
+    }

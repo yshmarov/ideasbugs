@@ -50,13 +50,14 @@ class DashboardTest < ActionDispatch::IntegrationTest
 
   test 'lists open feedback' do
     authorize_admin!
-    create_feedback(message: 'Open bug')
+    feedback = create_feedback(message: 'Open bug')
     create_feedback(message: 'Solved one', status: 'resolved')
 
     get '/feedback'
 
     assert_response :ok
     assert_includes response.body, 'Open bug'
+    assert_includes response.body, "feedback_id=#{feedback.id}"
     assert_not_includes response.body, 'Solved one'
   end
 
@@ -79,6 +80,7 @@ class DashboardTest < ActionDispatch::IntegrationTest
     assert_response :ok
     assert_equal 'text/css', response.media_type
     assert_includes response.body, '.tabs'
+    assert_includes response.body, '.ib-show { min-height: 100vh; overflow: auto; }'
   end
 
   test 'searches message, author, and section, case-insensitively' do
@@ -118,33 +120,47 @@ class DashboardTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'A bug in review'
   end
 
-  test 'hides the Section column when no sections are configured or present' do
+  test 'hides section metadata when no sections are configured or present' do
     authorize_admin!
     create_feedback(message: 'No section here')
 
     get '/feedback'
 
-    assert_not_includes response.body, '<th>Section</th>'
+    assert_not_includes response.body, 'feedback-section'
   end
 
-  test 'shows the Section column when sections are configured' do
+  test 'does not show blank section metadata when sections are configured' do
     authorize_admin!
     Ideasbugs.config.sections = %w[Billing Reports]
     create_feedback(message: 'No section, but configured')
 
     get '/feedback'
 
-    assert_includes response.body, '<th>Section</th>'
+    assert_not_includes response.body, 'feedback-section'
   end
 
-  test 'shows the Section column when a record has a section, even if unconfigured' do
+  test 'shows section metadata when a record has a section, even if unconfigured' do
     authorize_admin!
     create_feedback(message: 'Legacy section', section: 'Billing')
 
     get '/feedback'
 
-    assert_includes response.body, '<th>Section</th>'
+    assert_includes response.body, 'feedback-section'
     assert_includes response.body, 'Billing'
+  end
+
+  test 'index can render a selected feedback beside the list' do
+    authorize_admin!
+    feedback = create_feedback(section: 'Billing', page_url: 'http://example.com/x',
+                               author_label: 'user@example.com')
+
+    get '/feedback', params: { feedback_id: feedback.id }
+
+    assert_response :ok
+    assert_includes response.body, 'triage-shell has-selected'
+    assert_includes response.body, 'feedback-row active'
+    assert_includes response.body, 'It broke'
+    assert_includes response.body, 'user@example.com'
   end
 
   test 'shows one feedback with its details' do
@@ -154,6 +170,7 @@ class DashboardTest < ActionDispatch::IntegrationTest
 
     get "/feedback/feedbacks/#{feedback.id}"
 
+    assert_includes response.body, 'class="ib-show"'
     assert_includes response.body, 'It broke'
     assert_includes response.body, 'Billing'
     assert_includes response.body, 'user@example.com'
