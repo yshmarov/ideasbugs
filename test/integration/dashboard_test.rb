@@ -161,6 +161,8 @@ class DashboardTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'feedback-row active'
     assert_includes response.body, 'It broke'
     assert_includes response.body, 'user@example.com'
+    assert_operator response.body.rindex('user@example.com'), :<, response.body.rindex('It broke')
+    assert_operator response.body.rindex('It broke'), :<, response.body.rindex('Mark resolved')
   end
 
   test 'shows one feedback with its details' do

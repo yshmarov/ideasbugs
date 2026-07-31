@@ -13,20 +13,6 @@
 
   <div class="detail-scroll">
     <div class="card pad">
-      <p class="message"><%= feedback.message %></p>
-
-      <% if feedback.screenshots? %>
-        <div class="shots">
-          <% feedback.screenshots.each do |screenshot| %>
-            <%= link_to feedback_screenshot_path(feedback, screenshot.id), target: '_blank', rel: 'noopener' do %>
-              <%= image_tag feedback_screenshot_path(feedback, screenshot.id), alt: screenshot.filename %>
-            <% end %>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="card pad">
       <dl>
         <% if feedback.section.present? %>
           <dt><%= t('ideasbugs.section', default: 'Section') %></dt>
@@ -48,18 +34,32 @@
         <dd><%= feedback.created_at %></dd>
       </dl>
     </div>
-  </div>
 
-  <div class="actions">
-    <% (Ideasbugs::Feedback::STATUSES - [feedback.status]).each do |status| %>
-      <%= button_to t("ideasbugs.dashboard.move_to_#{status}", default: "Mark #{status.humanize.downcase}"),
+    <div class="card pad">
+      <p class="message"><%= feedback.message %></p>
+
+      <% if feedback.screenshots? %>
+        <div class="shots">
+          <% feedback.screenshots.each do |screenshot| %>
+            <%= link_to feedback_screenshot_path(feedback, screenshot.id), target: '_blank', rel: 'noopener' do %>
+              <%= image_tag feedback_screenshot_path(feedback, screenshot.id), alt: screenshot.filename %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="actions">
+      <% (Ideasbugs::Feedback::STATUSES - [feedback.status]).each do |status| %>
+        <%= button_to t("ideasbugs.dashboard.move_to_#{status}", default: "Mark #{status.humanize.downcase}"),
+                      feedback_path(feedback),
+                      method: :patch, params: { feedback: { status: status } },
+                      class: ('primary' if status == 'resolved') %>
+      <% end %>
+      <%= button_to t('ideasbugs.dashboard.delete', default: 'Delete'),
                     feedback_path(feedback),
-                    method: :patch, params: { feedback: { status: status } },
-                    class: ('primary' if status == 'resolved') %>
-    <% end %>
-    <%= button_to t('ideasbugs.dashboard.delete', default: 'Delete'),
-                  feedback_path(feedback),
-                  method: :delete, class: 'danger',
-                  form: { onsubmit: "return confirm('#{t('ideasbugs.dashboard.delete_confirm', default: 'Delete this feedback?')}')" } %>
+                    method: :delete, class: 'danger',
+                    form: { onsubmit: "return confirm('#{t('ideasbugs.dashboard.delete_confirm', default: 'Delete this feedback?')}')" } %>
+    </div>
   </div>
 </section>
