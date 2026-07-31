@@ -74,6 +74,17 @@ class DashboardTest < ActionDispatch::IntegrationTest
     assert_includes response.body, '<title>IdeasBugs</title>'
   end
 
+  test 'dashboard can render inside a host admin layout' do
+    authorize_admin!
+    Ideasbugs.config.admin_layout = 'host_admin'
+
+    get '/feedback'
+
+    assert_response :ok
+    assert_includes response.body, 'data-host-admin-layout="ideasbugs"'
+    assert_includes response.body, '<h1>IdeasBugs</h1>'
+  end
+
   test 'serves the dashboard stylesheet as a same-origin static asset' do
     get '/feedback/dashboard.css'
 

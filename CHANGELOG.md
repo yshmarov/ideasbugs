@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.5 (2026-07-31)
+
+- Added `config.admin_layout`, letting host apps render the Ideasbugs dashboard
+  inside their own admin layout while keeping the standalone gem layout as the
+  default.
+
 ## 0.7.4 (2026-07-31)
 
 - Redesigned the admin feedback dashboard into a two-column triage layout with

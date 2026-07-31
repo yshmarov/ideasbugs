@@ -16,6 +16,10 @@ module Ideasbugs
     # deploying, e.g. with an admin check.
     attr_accessor :authorize_admin
 
+    # Layout used by the built-in dashboard. Override this to render Ideasbugs
+    # inside your app's admin shell, e.g. "admin/application".
+    attr_accessor :admin_layout
+
     # Resolve the current user for attribution (optional). Return an object
     # responding to #id, or nil. Receives the request.
     attr_accessor :current_user
@@ -79,6 +83,7 @@ module Ideasbugs
     def initialize
       @enabled = ->(_request) { true }
       @authorize_admin = ->(_request) { Rails.env.development? }
+      @admin_layout = 'ideasbugs/application'
       @current_user = ->(_request) {}
       @tenant = ->(_request) {}
       @author_label = ->(user) { user.respond_to?(:email) ? user.email : user&.to_s }

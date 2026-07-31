@@ -4,7 +4,7 @@ module Ideasbugs
   class FeedbacksController < ApplicationController
     PER_PAGE = 50
 
-    layout 'ideasbugs/application', except: :create
+    layout :ideasbugs_admin_layout, except: :create
 
     # The widget posts here; everything else is the triage dashboard.
     before_action :require_enabled, only: :create

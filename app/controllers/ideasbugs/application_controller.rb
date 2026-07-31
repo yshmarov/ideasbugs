@@ -6,6 +6,10 @@ module Ideasbugs
 
     private
 
+    def ideasbugs_admin_layout
+      Ideasbugs.config.admin_layout
+    end
+
     def current_author
       return @current_author if defined?(@current_author)
 
