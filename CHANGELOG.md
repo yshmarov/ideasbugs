@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.6 (2026-07-31)
+
+- Fixed the trusted publishing workflow by building and pushing the gem
+  directly with RubyGems OIDC credentials after the test suite passes.
+
 ## 0.7.5 (2026-07-31)
 
 - Added `config.admin_layout`, letting host apps render the Ideasbugs dashboard
