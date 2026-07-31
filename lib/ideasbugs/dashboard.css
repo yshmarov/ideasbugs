@@ -52,7 +52,7 @@
                       background: var(--surface); color: var(--text); font: inherit; }
     button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
     button.danger { color: var(--bug); }
-    .message { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .message { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
     dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
     dt { color: var(--muted); }
     dd { margin: 0; overflow-wrap: anywhere; }
@@ -63,9 +63,10 @@
     .case-id { color: var(--muted); font-weight: 400; font-size: 15px; }
     .panel-head { flex: 0 0 auto; }
     .panel-head h1 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-    .detail-scroll { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+    .detail-scroll { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
     .feedback-panel { min-width: 0; display: flex; flex-direction: column; }
     .feedback-panel .actions { flex: 0 0 auto; }
+    .feedback-panel .detail-scroll > .actions { margin: 0; }
 
     /* Desktop triage: list on the left, selected feedback on the right. */
     .ib-index, .ib-index .container { height: 100vh; height: 100dvh; }
