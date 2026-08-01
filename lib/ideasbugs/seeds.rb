@@ -39,11 +39,12 @@ module Ideasbugs
           author_id: "ideasbugs-demo:#{seed_id}",
           tenant: tenant.presence
         )
-        feedback.assign_attributes(attributes.except(:seed_id).merge(
+        seed_attributes = attributes.except(:seed_id).merge(
           kind: kind_for(attributes.fetch(:kind)),
           tenant: tenant.presence,
           user_agent: 'ideasbugs demo seed'
-        ))
+        )
+        feedback.assign_attributes(seed_attributes)
         feedback.save!
         feedback
       end
