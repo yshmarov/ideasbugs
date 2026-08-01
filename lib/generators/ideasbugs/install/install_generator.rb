@@ -28,6 +28,7 @@ module Ideasbugs
       def post_install
         say "\nideasbugs installed. Run `rails db:migrate`, then add", :green
         say '`<%= ideasbugs_tag %>` before </body> in your layout.'
+        say 'Optional: run `bin/rails ideasbugs:seed_demo` for sample feedback.'
         say "Browse submissions at /feedback (development only until you set config.authorize_admin).\n"
       end
 

@@ -4,6 +4,10 @@ module Ideasbugs
   class Engine < ::Rails::Engine
     isolate_namespace Ideasbugs
 
+    rake_tasks do
+      load File.expand_path('../tasks/ideasbugs_tasks.rake', __dir__)
+    end
+
     initializer 'ideasbugs.helper' do
       ActiveSupport.on_load(:action_view) do
         include Ideasbugs::WidgetHelper

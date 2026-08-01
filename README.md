@@ -47,6 +47,16 @@ bin/rails db:migrate
 That's it. A floating **Feedback** button appears bottom-right; submissions
 land at `/feedback`.
 
+Optional demo data:
+
+```bash
+bin/rails ideasbugs:seed_demo
+```
+
+It creates three idempotent sample submissions across the open, in-review, and
+resolved states. Running the task again refreshes those records instead of
+duplicating them.
+
 > [!IMPORTANT]
 > The dashboard defaults to **development only**. Set `authorize_admin` before
 > you deploy — see [Configure](#configure).

@@ -4,6 +4,7 @@ require 'ideasbugs/version'
 require 'ideasbugs/configuration'
 require 'ideasbugs/widget'
 require 'ideasbugs/has_feedback'
+require 'ideasbugs/seeds'
 require 'ideasbugs/engine'
 
 # In-app product feedback collection for Rails. A drop-in widget lets users
