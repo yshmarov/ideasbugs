@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.7 (2026-08-01)
+
+- Added `Ideasbugs::Seeds.load!` and a `rake ideasbugs:seed_demo` task that
+  create or refresh a small set of demo feedback records, so a freshly mounted
+  dashboard has realistic content to look at. Seeding is idempotent and
+  accepts an optional `tenant:`.
+
 ## 0.7.6 (2026-07-31)
 
 - Fixed the trusted publishing workflow by building and pushing the gem
