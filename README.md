@@ -64,6 +64,11 @@ duplicating them.
 Ruby >= 3.2 · Rails >= 7.1 · Active Storage only if you want screenshots ·
 CSRF token comes from `csrf_meta_tags`, already in a standard Rails layout.
 
+Installing with a coding agent? Point it at [AGENTS.md](AGENTS.md) — the same
+steps in the order an agent needs them, plus the gates it tends to get wrong and
+the things it should not do. It ships inside the gem, so
+`cat "$(bundle show ideasbugs)/AGENTS.md"` works from any app that bundles it.
+
 ## What you get
 
 |              |                                                                          |
