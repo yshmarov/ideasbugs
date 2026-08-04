@@ -62,14 +62,22 @@
 
 /* Page frame — the gem's own layout only. */
 .ib-page { margin: 0; background: var(--ib-bg); color: var(--ib-text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+/* Desktop triage: list on the left, selected feedback on the right. */
+.ib-index, .ib-index .container { height: 100vh; height: 100dvh; }
 .ib-index { overflow: hidden; }
 .ib-index .container { max-width: 1280px; display: flex; flex-direction: column; padding-bottom: 16px; }
-.ib-index .container > h1 { flex: 0 0 auto; margin-bottom: 14px; }
+.ib-index .container h1 { flex: 0 0 auto; margin-bottom: 14px; }
+/* Standalone show pages keep normal page scrolling. */
+.ib-show { min-height: 100vh; overflow: auto; }
 .ib-show .feedback-panel { gap: 0; }
 .ib-show .detail-scroll { overflow: visible; }
 
 /* Dashboard components — any layout. */
 .ib-dashboard {
+  /* A scoping device, not a layout one: without this the wrapper would
+     become the flex/grid child that the content should be. */
+  display: contents;
+
   & * { box-sizing: border-box; }
   & a { color: var(--ib-accent); text-decoration: none; }
   & a:hover { text-decoration: underline; }
@@ -122,10 +130,6 @@
   & .feedback-panel { min-width: 0; display: flex; flex-direction: column; }
   & .feedback-panel .actions { flex: 0 0 auto; }
   & .feedback-panel .detail-scroll > .actions { margin: 0; }
-  & /* Desktop triage: list on the left,
-  & selected feedback on the right. */
-    .ib-index,
-  & .ib-index .container { height: 100vh; height: 100dvh; }
   & .triage-shell { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(320px, 400px) 1fr; gap: 16px; }
   & .triage-sidebar { min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--ib-surface); border: 1px solid var(--ib-border); border-radius: 8px; overflow: hidden; }
   & .triage-sidebar .tabs { flex: 0 0 auto; margin: 12px 12px 0; padding: 0; background: transparent; border: 0; border-radius: 0; gap: 6px; flex-wrap: nowrap; }
@@ -159,6 +163,4 @@
   & .empty-state h2 { margin: 0 0 6px; font-size: 18px; }
   & .empty-state p { margin: 0; }
   & .mobile-back { display: none; }
-  & /* Standalone show pages keep normal page scrolling. */
-    .ib-show { min-height: 100vh; overflow: auto; }
 }
