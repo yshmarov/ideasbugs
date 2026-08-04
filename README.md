@@ -334,12 +334,6 @@ Tests run against a dummy Rails app in `test/dummy`; the widget is covered by
 Capybara system tests in a real browser. CI runs Rails 7.1 / 7.2 / 8.0 / 8.1
 against Ruby 3.2–3.4 (per-version Gemfiles in `gemfiles/`).
 
-## Also by the same author
-
-- [testimonials](https://github.com/yshmarov/testimonials) — testimonials,
-  reviews and NPS for Rails. Its NPS detractor hook feeds straight into this gem.
-- [SupeRails](https://superails.com) — Rails screencasts.
-
 ## One family
 
 Five Rails engines built on the same backbone, so adopting a second one is
