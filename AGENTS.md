@@ -112,7 +112,7 @@ customer.feedback.open
 ### Do not
 
 - **Do not copy the widget JavaScript into `app/javascript`, or add a `<script>` tag for it.** `ideasbugs_tag` renders what is needed and the engine serves the code same-origin. There is no build step and nothing for esbuild/importmap/Tailwind to know about.
-- **Do not build your own dashboard.** Use the mounted one; `config.admin_layout = "admin/application"` renders it inside an existing admin shell.
+- **Do not rebuild the dashboard, and do not edit views inside the gem.** To put it inside an admin you already have, set `config.base_controller_class = "Admin::BaseController"` — it inherits that controller's layout, helpers, authentication and request context. For the shell alone, `config.admin_layout = "admin/application"`. Both work with nothing else wired up: the dashboard's own assets are declared by its views, not the layout.
 - **Do not expose screenshots by blob URL** — the gated route exists so a leaked signed URL cannot hand over a customer's screenshot.
 - **Do not set config outside the initializer.** `rate_limit` in particular is read once when the controller class loads; assigning config per-request mutates it process-wide.
 - **Do not convert the status strings to an enum** (see above).
@@ -134,6 +134,7 @@ Everything is optional; a fresh install works with zero config. Full list with c
 | `max_screenshots`, `max_screenshot_size` | `3`, `5.megabytes` | Enforced server-side |
 | `storage_service` | app default | A `storage.yml` key for a dedicated bucket |
 | `show_button`, `button_label` | `true`, localized | `false` = open from `data-ideasbugs-open` |
+| `base_controller_class` | `ActionController::Base` | Controller the dashboard inherits. Name your admin's and it adopts that layout, helpers, authentication and request context. Public endpoints never inherit it. |
 | `admin_layout` | `ideasbugs/application` | Render inside your admin shell |
 | `rate_limit` | `{ to: 10, within: 60 }` | Rails 7.2+; ignored on 7.1. `nil` disables |
 | `mount_path` | `"/feedback"` | Keep in sync with `mount_ideasbugs at:` |
@@ -143,6 +144,8 @@ Everything is optional; a fresh install works with zero config. Full list with c
 
 | Symptom | Cause |
 | --- | --- |
+| `NameError` for one of your own helpers in the dashboard | `isolate_namespace` scopes `helper` to the engine. Use `config.base_controller_class` so the dashboard inherits your helpers, rather than `admin_layout` alone. |
+| `NotNullViolation` attaching a file on a uuid-keyed app | The tables were generated bigint. Set `primary_key_type` in `config.generators` before installing, or migrate them to uuid. |
 | `/feedback` returns 403 "Set Ideasbugs.config.authorize_admin to grant access" | Exactly what it says: still at the development-only default |
 | No Feedback button | `ideasbugs_tag` missing from the rendered layout, `config.enabled` false, or `show_button = false` with no opener of your own |
 | Submissions rejected with an invalid-token error | The layout is missing `csrf_meta_tags` |
@@ -151,6 +154,10 @@ Everything is optional; a fresh install works with zero config. Full list with c
 | `undefined local variable current_user` in the initializer | A gate lambda treated its argument as a controller. It is a `request` |
 
 ---
+
+## One family
+
+`testimonials`, `livechat`, `product_tours`, `i18n_proofreading` are the sibling engines. Same install shape, same host hooks (`base_controller_class`, `admin_layout`), same scoped dashboard CSS, same `primary_key_type`-aware migrations — so what you learn here transfers.
 
 ## Working on the gem itself
 

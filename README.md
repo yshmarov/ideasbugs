@@ -340,6 +340,25 @@ against Ruby 3.2–3.4 (per-version Gemfiles in `gemfiles/`).
   reviews and NPS for Rails. Its NPS detractor hook feeds straight into this gem.
 - [SupeRails](https://superails.com) — Rails screencasts.
 
+## One family
+
+Five Rails engines built on the same backbone, so adopting a second one is
+mostly muscle memory:
+
+| Gem | What it does |
+| --- | --- |
+| [testimonials](https://github.com/yshmarov/testimonials) | Testimonials, reviews and NPS — text and video, collected in your own app |
+| **ideasbugs** *(this gem)* | In-app bug reports and feature requests, with a triage queue |
+| [livechat](https://github.com/yshmarov/livechat) | Live chat between your visitors and your agents, self-hosted |
+| [product_tours](https://github.com/yshmarov/product_tours) | Product tours and video tutorials, shown in-app at the right moment |
+| [i18n_proofreading](https://github.com/yshmarov/i18n_proofreading) | In-context translation fixes suggested by your own users |
+
+They share the install shape (`generate <gem>:install`, mount, one initializer),
+the same host hooks (`base_controller_class` to inherit your admin's controller,
+`admin_layout` for just the shell), a dashboard stylesheet scoped so it
+cannot touch your own CSS, and migrations that follow your app's
+`primary_key_type`.
+
 ## License
 
 MIT. Formerly published as `feedback_engine` — see the

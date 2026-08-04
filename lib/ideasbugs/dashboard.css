@@ -60,18 +60,6 @@
   }
 }
 
-/* Page frame — the gem's own layout only. */
-.ib-page { margin: 0; background: var(--ib-bg); color: var(--ib-text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-/* Desktop triage: list on the left, selected feedback on the right. */
-.ib-index, .ib-index .container { height: 100vh; height: 100dvh; }
-.ib-index { overflow: hidden; }
-.ib-index .container { max-width: 1280px; display: flex; flex-direction: column; padding-bottom: 16px; }
-.ib-index .container h1 { flex: 0 0 auto; margin-bottom: 14px; }
-/* Standalone show pages keep normal page scrolling. */
-.ib-show { min-height: 100vh; overflow: auto; }
-.ib-show .feedback-panel { gap: 0; }
-.ib-show .detail-scroll { overflow: visible; }
-
 /* Dashboard components — any layout. */
 .ib-dashboard {
   /* A scoping device, not a layout one: without this the wrapper would
@@ -164,3 +152,16 @@
   & .empty-state p { margin: 0; }
   & .mobile-back { display: none; }
 }
+
+/* Page frame — the gem's own layout only. Last, so it wins the
+   specificity ties against the component layer above. */
+.ib-page { margin: 0; background: var(--ib-bg); color: var(--ib-text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+/* Desktop triage: list on the left, selected feedback on the right. */
+.ib-index, .ib-index .container { height: 100vh; height: 100dvh; }
+.ib-index { overflow: hidden; }
+.ib-index .container { max-width: 1280px; display: flex; flex-direction: column; padding-bottom: 16px; }
+.ib-index .container h1 { flex: 0 0 auto; margin-bottom: 14px; }
+/* Standalone show pages keep normal page scrolling. */
+.ib-show { min-height: 100vh; overflow: auto; }
+.ib-show .feedback-panel { gap: 0; }
+.ib-show .detail-scroll { overflow: visible; }

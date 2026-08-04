@@ -116,6 +116,22 @@ class BackboneTest < ActionDispatch::IntegrationTest
     assert_equal stripped.count('{'), stripped.count('}'), 'unbalanced braces in dashboard.css'
   end
 
+  # `.x-index .container` (page frame) and `.x-dashboard .container` (component)
+  # are both specificity (0,2,0), so source order is the only tiebreaker. With
+  # the component layer last, every dashboard silently fell back to its base
+  # container width instead of the wider one the index page asks for.
+  test 'the page frame is declared after the component layer' do
+    get '/feedback/dashboard.css'
+
+    components = response.body.index('.ib-dashboard {')
+    frame = response.body.index('/* Page frame')
+
+    refute_nil components, 'no component layer in dashboard.css'
+    refute_nil frame, 'no page-frame layer in dashboard.css'
+    assert frame > components,
+           'the page frame must come last, or it loses every specificity tie to the component layer'
+  end
+
   private
 
   def authorize_admin!
