@@ -1,10 +1,12 @@
 <% content_for :body_class, 'ib-index' %>
 
 <%= render layout: 'ideasbugs/shared/dashboard' do %>
-  <h1><%= t('ideasbugs.dashboard.title', default: 'IdeasBugs') %></h1>
+  <div class="page-head">
+    <h1><%= t('ideasbugs.dashboard.title', default: 'IdeasBugs') %></h1>
+  </div>
 
-  <div class="triage-shell <%= 'has-selected' if @selected_feedback %>">
-    <aside class="triage-sidebar" aria-label="<%= t('ideasbugs.dashboard.feedback', default: 'Feedback') %>">
+  <div class="dashboard-shell <%= 'has-selected' if @selected_feedback %>">
+    <aside class="dashboard-sidebar" aria-label="<%= t('ideasbugs.dashboard.feedback', default: 'Feedback') %>">
       <div class="tabs">
         <% Ideasbugs::Feedback::STATUSES.each do |status| %>
           <%= link_to feedbacks_path(status: status, kind: @kind, q: @query),
@@ -31,26 +33,26 @@
         <button><%= t('ideasbugs.dashboard.search', default: 'Search') %></button>
       </form>
 
-      <div class="feedback-list">
+      <div class="record-list">
         <% if @feedbacks.any? %>
           <% @feedbacks.each do |feedback| %>
             <%= link_to feedbacks_path(status: @status, kind: @kind, q: @query, page: @page,
                                        feedback_id: feedback.id),
-                        class: ['feedback-row', ('active' if @selected_feedback&.id == feedback.id)].compact do %>
-              <span class="feedback-main">
-                <span class="feedback-topline">
+                        class: ['record-row', ('active' if @selected_feedback&.id == feedback.id)].compact do %>
+              <span class="record-main">
+                <span class="record-topline">
                   <span class="badge kind-<%= feedback.kind.to_s.parameterize %>">
                     <%= t("ideasbugs.kinds.#{feedback.kind}", default: feedback.kind.humanize) %>
                   </span>
                   <span class="badge status-<%= feedback.status %>">
                     <%= t("ideasbugs.statuses.#{feedback.status}", default: feedback.status.humanize) %>
                   </span>
-                  <span class="muted feedback-time" title="<%= feedback.created_at %>">
+                  <span class="muted record-time" title="<%= feedback.created_at %>">
                     <%= time_ago_in_words(feedback.created_at) %>
                   </span>
                 </span>
-                <span class="feedback-message"><%= truncate(feedback.message, length: 120) %></span>
-                <span class="muted feedback-meta">
+                <span class="record-copy"><%= truncate(feedback.message, length: 120) %></span>
+                <span class="muted record-meta">
                   <span>#<%= feedback.id %></span>
                   <% if @show_section && feedback.section.present? %>
                     <span class="feedback-section"><%= feedback.section %></span>
@@ -61,7 +63,7 @@
                 </span>
               </span>
               <% if feedback.screenshots? %>
-                <span class="muted attachment-count">📎 <%= feedback.screenshots.count %></span>
+                <span class="record-side muted">📎 <%= feedback.screenshots.count %></span>
               <% end %>
             <% end %>
           <% end %>
@@ -82,7 +84,7 @@
       </div>
     </aside>
 
-    <main class="triage-detail" aria-label="<%= t('ideasbugs.dashboard.current_feedback', default: 'Current feedback') %>">
+    <main class="dashboard-detail" aria-label="<%= t('ideasbugs.dashboard.current_feedback', default: 'Current feedback') %>">
       <% if @selected_feedback %>
         <p class="mobile-back">
           <%= link_to t('ideasbugs.dashboard.back', default: '← All feedback'),

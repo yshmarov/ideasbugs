@@ -168,8 +168,8 @@ class DashboardTest < ActionDispatch::IntegrationTest
     get '/feedback', params: { feedback_id: feedback.id }
 
     assert_response :ok
-    assert_includes response.body, 'triage-shell has-selected'
-    assert_includes response.body, 'feedback-row active'
+    assert_includes response.body, 'dashboard-shell has-selected'
+    assert_includes response.body, 'record-row active'
     assert_includes response.body, 'It broke'
     assert_includes response.body, 'user@example.com'
     assert_operator response.body.rindex('user@example.com'), :<, response.body.rindex('It broke')
