@@ -2,11 +2,13 @@
 
 require 'rails/generators'
 require 'rails/generators/active_record'
+require_relative '../migration_helpers'
 
 module Ideasbugs
   module Generators
     class InstallGenerator < Rails::Generators::Base
       include ActiveRecord::Generators::Migration
+      include MigrationHelpers
 
       source_root File.expand_path('templates', __dir__)
 
@@ -30,12 +32,6 @@ module Ideasbugs
         say '`<%= ideasbugs_tag %>` before </body> in your layout.'
         say 'Optional: run `bin/rails ideasbugs:seed_demo` for sample feedback.'
         say "Browse submissions at /feedback (development only until you set config.authorize_admin).\n"
-      end
-
-      private
-
-      def migration_version
-        "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
       end
     end
   end

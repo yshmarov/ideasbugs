@@ -1,99 +1,101 @@
 <% content_for :body_class, 'ib-index' %>
 
-<h1><%= t('ideasbugs.dashboard.title', default: 'IdeasBugs') %></h1>
+<%= render layout: 'ideasbugs/shared/dashboard' do %>
+  <h1><%= t('ideasbugs.dashboard.title', default: 'IdeasBugs') %></h1>
 
-<div class="triage-shell <%= 'has-selected' if @selected_feedback %>">
-  <aside class="triage-sidebar" aria-label="<%= t('ideasbugs.dashboard.feedback', default: 'Feedback') %>">
-    <div class="tabs">
-      <% Ideasbugs::Feedback::STATUSES.each do |status| %>
-        <%= link_to feedbacks_path(status: status, kind: @kind, q: @query),
-                    class: ('active' if status == @status) do %>
-          <%= t("ideasbugs.statuses.#{status}", default: status.humanize) %>
-          <span class="count"><%= @counts.fetch(status, 0) %></span>
-        <% end %>
-      <% end %>
-    </div>
-
-    <form class="filters" method="get">
-      <input type="hidden" name="status" value="<%= @status %>">
-      <select name="kind" onchange="this.form.submit()">
-        <option value=""><%= t('ideasbugs.dashboard.all_kinds', default: 'All types') %></option>
-        <% Ideasbugs.config.kinds.each do |kind| %>
-          <option value="<%= kind %>" <%= 'selected' if kind.to_s == @kind %>>
-            <%= t("ideasbugs.kinds.#{kind}", default: kind.to_s.humanize) %>
-          </option>
-        <% end %>
-      </select>
-      <input type="search" name="q" value="<%= @query %>"
-             placeholder="<%= t('ideasbugs.dashboard.search_placeholder', default: 'Search message, author, section…') %>"
-             aria-label="<%= t('ideasbugs.dashboard.search', default: 'Search') %>">
-      <button><%= t('ideasbugs.dashboard.search', default: 'Search') %></button>
-    </form>
-
-    <div class="feedback-list">
-      <% if @feedbacks.any? %>
-        <% @feedbacks.each do |feedback| %>
-          <%= link_to feedbacks_path(status: @status, kind: @kind, q: @query, page: @page,
-                                     feedback_id: feedback.id),
-                      class: ['feedback-row', ('active' if @selected_feedback&.id == feedback.id)].compact do %>
-            <span class="feedback-main">
-              <span class="feedback-topline">
-                <span class="badge kind-<%= feedback.kind.to_s.parameterize %>">
-                  <%= t("ideasbugs.kinds.#{feedback.kind}", default: feedback.kind.humanize) %>
-                </span>
-                <span class="badge status-<%= feedback.status %>">
-                  <%= t("ideasbugs.statuses.#{feedback.status}", default: feedback.status.humanize) %>
-                </span>
-                <span class="muted feedback-time" title="<%= feedback.created_at %>">
-                  <%= time_ago_in_words(feedback.created_at) %>
-                </span>
-              </span>
-              <span class="feedback-message"><%= truncate(feedback.message, length: 120) %></span>
-              <span class="muted feedback-meta">
-                <span>#<%= feedback.id %></span>
-                <% if @show_section && feedback.section.present? %>
-                  <span class="feedback-section"><%= feedback.section %></span>
-                <% end %>
-                <% if feedback.author_label.present? %>
-                  <span><%= feedback.author_label %></span>
-                <% end %>
-              </span>
-            </span>
-            <% if feedback.screenshots? %>
-              <span class="muted attachment-count">📎 <%= feedback.screenshots.count %></span>
-            <% end %>
+  <div class="triage-shell <%= 'has-selected' if @selected_feedback %>">
+    <aside class="triage-sidebar" aria-label="<%= t('ideasbugs.dashboard.feedback', default: 'Feedback') %>">
+      <div class="tabs">
+        <% Ideasbugs::Feedback::STATUSES.each do |status| %>
+          <%= link_to feedbacks_path(status: status, kind: @kind, q: @query),
+                      class: ('active' if status == @status) do %>
+            <%= t("ideasbugs.statuses.#{status}", default: status.humanize) %>
+            <span class="count"><%= @counts.fetch(status, 0) %></span>
           <% end %>
         <% end %>
-      <% else %>
-        <div class="empty"><%= t('ideasbugs.dashboard.empty', default: 'Nothing here yet.') %></div>
-      <% end %>
-    </div>
-
-    <div class="pager">
-      <% if @page > 1 %>
-        <%= link_to t('ideasbugs.dashboard.newer', default: '← Newer'),
-                    feedbacks_path(status: @status, kind: @kind, q: @query, page: @page - 1) %>
-      <% end %>
-      <% if @more %>
-        <%= link_to t('ideasbugs.dashboard.older', default: 'Older →'),
-                    feedbacks_path(status: @status, kind: @kind, q: @query, page: @page + 1) %>
-      <% end %>
-    </div>
-  </aside>
-
-  <main class="triage-detail" aria-label="<%= t('ideasbugs.dashboard.current_feedback', default: 'Current feedback') %>">
-    <% if @selected_feedback %>
-      <p class="mobile-back">
-        <%= link_to t('ideasbugs.dashboard.back', default: '← All feedback'),
-                    feedbacks_path(status: @status, kind: @kind, q: @query, page: @page) %>
-      </p>
-      <%= render 'feedback_panel', feedback: @selected_feedback %>
-    <% else %>
-      <div class="empty-state">
-        <h2><%= t('ideasbugs.dashboard.select_feedback', default: 'Select feedback') %></h2>
-        <p class="muted"><%= t('ideasbugs.dashboard.select_feedback_hint',
-                               default: 'Open an item from the list to triage it without leaving the queue.') %></p>
       </div>
-    <% end %>
-  </main>
-</div>
+
+      <form class="filters" method="get">
+        <input type="hidden" name="status" value="<%= @status %>">
+        <select name="kind" onchange="this.form.submit()">
+          <option value=""><%= t('ideasbugs.dashboard.all_kinds', default: 'All types') %></option>
+          <% Ideasbugs.config.kinds.each do |kind| %>
+            <option value="<%= kind %>" <%= 'selected' if kind.to_s == @kind %>>
+              <%= t("ideasbugs.kinds.#{kind}", default: kind.to_s.humanize) %>
+            </option>
+          <% end %>
+        </select>
+        <input type="search" name="q" value="<%= @query %>"
+               placeholder="<%= t('ideasbugs.dashboard.search_placeholder', default: 'Search message, author, section…') %>"
+               aria-label="<%= t('ideasbugs.dashboard.search', default: 'Search') %>">
+        <button><%= t('ideasbugs.dashboard.search', default: 'Search') %></button>
+      </form>
+
+      <div class="feedback-list">
+        <% if @feedbacks.any? %>
+          <% @feedbacks.each do |feedback| %>
+            <%= link_to feedbacks_path(status: @status, kind: @kind, q: @query, page: @page,
+                                       feedback_id: feedback.id),
+                        class: ['feedback-row', ('active' if @selected_feedback&.id == feedback.id)].compact do %>
+              <span class="feedback-main">
+                <span class="feedback-topline">
+                  <span class="badge kind-<%= feedback.kind.to_s.parameterize %>">
+                    <%= t("ideasbugs.kinds.#{feedback.kind}", default: feedback.kind.humanize) %>
+                  </span>
+                  <span class="badge status-<%= feedback.status %>">
+                    <%= t("ideasbugs.statuses.#{feedback.status}", default: feedback.status.humanize) %>
+                  </span>
+                  <span class="muted feedback-time" title="<%= feedback.created_at %>">
+                    <%= time_ago_in_words(feedback.created_at) %>
+                  </span>
+                </span>
+                <span class="feedback-message"><%= truncate(feedback.message, length: 120) %></span>
+                <span class="muted feedback-meta">
+                  <span>#<%= feedback.id %></span>
+                  <% if @show_section && feedback.section.present? %>
+                    <span class="feedback-section"><%= feedback.section %></span>
+                  <% end %>
+                  <% if feedback.author_label.present? %>
+                    <span><%= feedback.author_label %></span>
+                  <% end %>
+                </span>
+              </span>
+              <% if feedback.screenshots? %>
+                <span class="muted attachment-count">📎 <%= feedback.screenshots.count %></span>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% else %>
+          <div class="empty"><%= t('ideasbugs.dashboard.empty', default: 'Nothing here yet.') %></div>
+        <% end %>
+      </div>
+
+      <div class="pager">
+        <% if @page > 1 %>
+          <%= link_to t('ideasbugs.dashboard.newer', default: '← Newer'),
+                      feedbacks_path(status: @status, kind: @kind, q: @query, page: @page - 1) %>
+        <% end %>
+        <% if @more %>
+          <%= link_to t('ideasbugs.dashboard.older', default: 'Older →'),
+                      feedbacks_path(status: @status, kind: @kind, q: @query, page: @page + 1) %>
+        <% end %>
+      </div>
+    </aside>
+
+    <main class="triage-detail" aria-label="<%= t('ideasbugs.dashboard.current_feedback', default: 'Current feedback') %>">
+      <% if @selected_feedback %>
+        <p class="mobile-back">
+          <%= link_to t('ideasbugs.dashboard.back', default: '← All feedback'),
+                      feedbacks_path(status: @status, kind: @kind, q: @query, page: @page) %>
+        </p>
+        <%= render 'feedback_panel', feedback: @selected_feedback %>
+      <% else %>
+        <div class="empty-state">
+          <h2><%= t('ideasbugs.dashboard.select_feedback', default: 'Select feedback') %></h2>
+          <p class="muted"><%= t('ideasbugs.dashboard.select_feedback_hint',
+                                 default: 'Open an item from the list to triage it without leaving the queue.') %></p>
+        </div>
+      <% end %>
+    </main>
+  </div>
+<% end %>

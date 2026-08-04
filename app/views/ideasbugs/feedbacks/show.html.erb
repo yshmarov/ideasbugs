@@ -1,8 +1,10 @@
 <% content_for :body_class, 'ib-show' %>
 
-<div class="breadcrumb">
-  <%= link_to t('ideasbugs.dashboard.title', default: 'IdeasBugs'), root_path %>
-  / #<%= @feedback.id %>
-</div>
+<%= render layout: 'ideasbugs/shared/dashboard' do %>
+  <div class="breadcrumb">
+    <%= link_to t('ideasbugs.dashboard.title', default: 'IdeasBugs'), root_path %>
+    / #<%= @feedback.id %>
+  </div>
 
-<%= render 'feedback_panel', feedback: @feedback %>
+  <%= render 'feedback_panel', feedback: @feedback %>
+<% end %>

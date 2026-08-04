@@ -11,6 +11,14 @@ Ideasbugs.configure do |config|
   #
   # Render the dashboard inside your app's admin layout. Default: the gem's
   # standalone dashboard layout.
+  # Two ways to put the dashboard inside an admin you already have.
+  #
+  # The whole stack — your layout, helpers, authentication and any request
+  # context your before_actions set up. Only the dashboard inherits it; the
+  # widget's endpoint stays public, so this cannot gate a bug report.
+  # config.base_controller_class = "Admin::BaseController"
+  #
+  # Or the layout alone:
   # config.admin_layout = "admin/application"
 
   # Attribute feedback to a user (optional). Return an object responding to

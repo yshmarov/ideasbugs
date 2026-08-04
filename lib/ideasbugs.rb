@@ -29,6 +29,13 @@ module Ideasbugs
 
     # Can this request browse and triage feedback? Checked by every dashboard
     # action.
+    # The class Ideasbugs::DashboardController inherits from. Resolved on every
+    # call rather than memoized, so a host that reassigns base_controller_class
+    # in a reloadable initializer is not pinned to a stale, unloaded constant.
+    def base_controller
+      config.base_controller_class.to_s.constantize
+    end
+
     def admin?(request)
       !!config.authorize_admin.call(request)
     end

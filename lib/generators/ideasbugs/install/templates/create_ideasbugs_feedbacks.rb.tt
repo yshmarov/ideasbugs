@@ -2,7 +2,7 @@
 
 class CreateIdeasbugsFeedbacks < ActiveRecord::Migration<%= migration_version %>
   def change
-    create_table :ideasbugs_feedbacks do |t|
+    create_table :ideasbugs_feedbacks<%= primary_key_type_option %> do |t|
       t.string :kind, null: false, default: 'other'
       t.string :section
       t.text :message, null: false

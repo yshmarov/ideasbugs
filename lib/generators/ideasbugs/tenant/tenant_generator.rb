@@ -2,6 +2,7 @@
 
 require 'rails/generators'
 require 'rails/generators/active_record'
+require_relative '../migration_helpers'
 
 module Ideasbugs
   module Generators
@@ -14,6 +15,7 @@ module Ideasbugs
     #   bin/rails generate ideasbugs:tenant && bin/rails db:migrate
     class TenantGenerator < Rails::Generators::Base
       include ActiveRecord::Generators::Migration
+      include MigrationHelpers
 
       source_root File.expand_path('templates', __dir__)
 
@@ -27,12 +29,6 @@ module Ideasbugs
       def post_install
         say "\ntenant column queued. Run `rails db:migrate`, then set", :green
         say 'config.tenant in config/initializers/ideasbugs.rb to scope per tenant.'
-      end
-
-      private
-
-      def migration_version
-        "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
       end
     end
   end

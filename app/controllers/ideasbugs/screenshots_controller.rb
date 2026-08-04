@@ -6,9 +6,7 @@ module Ideasbugs
   # screenshots can contain anything a user's screen showed, so they must never
   # be reachable without passing the same gate as the dashboard — regardless of
   # how the host app configures (or doesn't configure) blob access.
-  class ScreenshotsController < ApplicationController
-    before_action :require_admin
-
+  class ScreenshotsController < DashboardController
     def show
       screenshot = Feedback.for_tenant(current_tenant)
                            .find(params[:feedback_id]).screenshots.find(params[:id])

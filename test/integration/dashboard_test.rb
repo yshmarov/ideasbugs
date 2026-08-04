@@ -183,7 +183,7 @@ class DashboardTest < ActionDispatch::IntegrationTest
 
     get "/feedback/feedbacks/#{feedback.id}"
 
-    assert_includes response.body, 'class="ib-show"'
+    assert_includes response.body, 'ib-show"'
     assert_includes response.body, 'It broke'
     assert_includes response.body, 'Billing'
     assert_includes response.body, 'user@example.com'
