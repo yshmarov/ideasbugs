@@ -173,7 +173,15 @@ class DashboardTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'It broke'
     assert_includes response.body, 'user@example.com'
     assert_operator response.body.rindex('user@example.com'), :<, response.body.rindex('It broke')
-    assert_operator response.body.rindex('It broke'), :<, response.body.rindex('Mark resolved')
+    assert_operator response.body.rindex('It broke'), :<, response.body.rindex('Delete')
+    # Status moved from a row of buttons under the message to the switch in the
+    # heading: the status it is in is lit and inert, the other two submit.
+    assert_includes response.body, 'status-switch'
+    assert_includes response.body, 'class="status-open current"'
+    assert_select 'form.status-switch button[name="feedback[status]"][value=?]', 'resolved'
+    assert_select 'form.status-switch button[name="feedback[status]"][value=?]', 'in_review'
+    # The heading badge said the status the switch now shows.
+    assert_select '.panel-head .badge.status-open', false
   end
 
   test 'shows one feedback with its details' do

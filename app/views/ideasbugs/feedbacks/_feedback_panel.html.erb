@@ -4,11 +4,25 @@
       <span class="badge kind-<%= feedback.kind.to_s.parameterize %>">
         <%= t("ideasbugs.kinds.#{feedback.kind}", default: feedback.kind.humanize) %>
       </span>
-      <span class="badge status-<%= feedback.status %>">
-        <%= t("ideasbugs.statuses.#{feedback.status}", default: feedback.status.humanize) %>
-      </span>
       <span class="case-id">#<%= feedback.id %></span>
     </h1>
+
+    <%# The shared status switch, carrying the status the heading badge used to
+        state: the current one is lit and inert, every other one is a submit
+        that files the report under it. One form, no JS. %>
+    <%= form_with url: feedback_path(feedback), method: :patch, class: 'status-switch' do %>
+      <% Ideasbugs::Feedback::STATUSES.each do |status| %>
+        <% label = t("ideasbugs.statuses.#{status}", default: status.humanize) %>
+        <% if status == feedback.status %>
+          <button type="button" class="status-<%= status %> current" aria-current="true"><%= label %></button>
+        <% else %>
+          <button name="feedback[status]" value="<%= status %>" class="status-<%= status %>"
+                  aria-label="<%= t("ideasbugs.dashboard.move_to_#{status}", default: "Mark #{status.humanize.downcase}") %>">
+            <%= label %>
+          </button>
+        <% end %>
+      <% end %>
+    <% end %>
   </div>
 
   <div class="detail-scroll">
@@ -49,13 +63,9 @@
       <% end %>
     </div>
 
+    <%# Status lives in the switch in the heading; only what a switch cannot say
+        is left here. %>
     <div class="actions">
-      <% (Ideasbugs::Feedback::STATUSES - [feedback.status]).each do |status| %>
-        <%= button_to t("ideasbugs.dashboard.move_to_#{status}", default: "Mark #{status.humanize.downcase}"),
-                      feedback_path(feedback),
-                      method: :patch, params: { feedback: { status: status } },
-                      class: ('primary' if status == 'resolved') %>
-      <% end %>
       <%= button_to t('ideasbugs.dashboard.delete', default: 'Delete'),
                     feedback_path(feedback),
                     method: :delete, class: 'danger',

@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.10.0
+
+- **Triage is one switch now.** Open, In review and Resolved sit in a single pill
+  in the panel heading — the status the report is in is lit in that status's
+  colour, the other two are one click away. It replaces the row of `Mark in
+  review` / `Mark resolved` / `Reopen` buttons under the message, which grew a
+  button per status and read as three unrelated actions rather than one control.
+  The status badge left the heading with them: the switch already says it.
+- **The switch is the family's, not this gem's.** It lives in the shared core of
+  `dashboard.css` as `.status-switch`, the same component livechat's
+  open/resolved switch now uses, so a third gem that needs one inherits it.
+- No JavaScript: each segment is a submit button in one form, and the lit segment
+  is a `type="button"` so clicking the status a report already has cannot re-file
+  it. If you styled the old `.actions` status buttons, that is the breaking
+  change — `PATCH /feedbacks/:id` with `feedback[status]` is unchanged, so any
+  script or link that drove triage still works.
+
 ## 0.9.0
 
 - **One design system across the family.** The stylesheet now opens with a
