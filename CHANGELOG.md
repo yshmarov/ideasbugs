@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10.1
+
+- **The demo inbox now teaches the Ideasbugs workflow.** Its open, in-review,
+  and resolved records form a short path through captured request context,
+  triage, kinds and sections, search, production authorization, attribution,
+  and gated screenshots instead of posing as unrelated customer reports.
+- `ideasbugs:seed_demo` keeps the existing demo identities, so rerunning it
+  upgrades those three rows in place. That also means it overwrites edits made
+  to the gem-owned demo rows; real feedback is not touched.
+
 ## 0.10.0
 
 - **Triage is one switch now.** Open, In review and Resolved sit in a single pill

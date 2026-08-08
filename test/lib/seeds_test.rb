@@ -12,6 +12,8 @@ class SeedsTest < ActiveSupport::TestCase
     assert_equal 3, Ideasbugs::Feedback.where("author_id LIKE 'ideasbugs-demo:%'").count
     assert_equal Ideasbugs::Feedback::STATUSES.sort, first.map(&:status).sort
     assert_equal %w[bug feature other], first.map(&:kind)
+    assert_includes first.find(&:open?).message, 'Move it to In review'
+    assert_includes first.find(&:resolved?).message, 'set authorize_admin before production'
   end
 
   test 'can scope demo feedback to a tenant' do
