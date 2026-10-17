@@ -2,7 +2,18 @@
 
 module Ideasbugs
   class Engine < ::Rails::Engine
+    initializer 'ideasbugs.ractor_middleware' do |app|
+      app.middleware.insert_before 0, RactorSupport::Middleware
+    end
+
     isolate_namespace Ideasbugs
+
+    initializer 'ideasbugs.ractorize', before: 'action_controller.ractorize' do
+      if Rails::Application.method_defined?(:ractorize!)
+        Engine.routes.singleton_class.prepend(RactorSupport::MountedRoutes)
+      end
+      ActiveSupport.on_load(:before_ractorize) { Ideasbugs::RactorSupport.prepare! }
+    end
 
     rake_tasks do
       load File.expand_path('../tasks/ideasbugs_tasks.rake', __dir__)

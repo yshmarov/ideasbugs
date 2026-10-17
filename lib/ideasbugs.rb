@@ -2,6 +2,7 @@
 
 require 'ideasbugs/version'
 require 'ideasbugs/configuration'
+require 'ideasbugs/ractor_support'
 require 'ideasbugs/widget'
 require 'ideasbugs/widget_helper'
 require 'ideasbugs/has_feedback'

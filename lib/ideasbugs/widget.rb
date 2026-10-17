@@ -12,8 +12,8 @@ module Ideasbugs
   # that *does* run a pipeline never ingests it either: nothing lands in the
   # host's asset namespace or precompiled output.
   module Widget
-    SOURCE = File.expand_path('widget.js', __dir__)
-    DASHBOARD_STYLESHEET_SOURCE = File.expand_path('dashboard.css', __dir__)
+    SOURCE = File.expand_path('widget.js', __dir__).freeze
+    DASHBOARD_STYLESHEET_SOURCE = File.expand_path('dashboard.css', __dir__).freeze
 
     # Right-to-left scripts, so the form renders mirrored for those locales.
     # Matched on the language subtag, so region variants ("ar-EG") count too.

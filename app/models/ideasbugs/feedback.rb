@@ -30,8 +30,11 @@ module Ideasbugs
 
     STATUSES.each do |status|
       scope status, -> { where(status:) }
-      define_method(:"#{status}?") { self.status == status }
     end
+
+    def open? = status == 'open'
+    def in_review? = status == 'in_review'
+    def resolved? = status == 'resolved'
 
     def screenshots?
       respond_to?(:screenshots) && screenshots.attached?

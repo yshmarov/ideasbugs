@@ -22,7 +22,17 @@ module Ideasbugs
     def has_feedback(as: :feedback, key: nil) # rubocop:disable Naming/PredicatePrefix
       resolver = key || ->(record) { record.to_gid.to_s }
 
-      define_method(as) { Ideasbugs::Feedback.for_tenant(resolver.call(self)) }
+      class_attribute :_ideasbugs_feedback_resolvers, instance_accessor: false, default: {} unless
+        respond_to?(:_ideasbugs_feedback_resolvers)
+      feedback_name = as.to_sym
+      declaring_model = self
+      self._ideasbugs_feedback_resolvers = _ideasbugs_feedback_resolvers.merge(feedback_name => resolver)
+      getter = proc do
+        key_resolver = declaring_model._ideasbugs_feedback_resolvers.fetch(feedback_name)
+        Ideasbugs::Feedback.for_tenant(key_resolver.call(self))
+      end
+      getter = Ractor.shareable_proc(&getter) if defined?(Ractor.shareable_proc)
+      define_method(as, &getter)
     end
   end
 end

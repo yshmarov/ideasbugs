@@ -16,7 +16,7 @@ module Ideasbugs
     # this is a no-op. Tune or disable via config.rate_limit — read once at
     # boot, after the host's initializer.
     if respond_to?(:rate_limit) && Ideasbugs.config.rate_limit
-      rate_limit(**Ideasbugs.config.rate_limit,
+      Ideasbugs::RactorSupport.rate_limit(self, **Ideasbugs.config.rate_limit,
                  only: :create,
                  with: -> { render json: { errors: [t_error(:error_rate_limited)] }, status: :too_many_requests })
     end
