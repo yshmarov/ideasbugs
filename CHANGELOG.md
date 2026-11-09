@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-09
+
+- Add `Ideasbugs::Feedback.submit(attributes, author:, tenant:, user_agent:,
+  screenshots:)`, the widget's submission rules as one call: page URL privacy
+  filtering, author attribution, screenshot limits and the `on_submit` hook.
+  A host exposing feedback through its own API calls it instead of
+  re-implementing them. Only `kind`, `section`, `message` and `page_url` are
+  taken from attributes. The widget endpoint now uses the same method; its
+  responses and error messages are unchanged. No migration or initializer
+  change.
+
 ## [1.1.0] - 2026-10-18
 
 - Add Rails edge CI and experimental Ruby 4.0+ Ractor request support. The host

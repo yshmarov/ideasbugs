@@ -65,5 +65,33 @@ module Ideasbugs
 
       assert_predicate feedback, :screenshots?
     end
+
+    Author = Struct.new(:id, :email)
+
+    test 'submit files feedback the way the widget does' do
+      submitted = []
+      Ideasbugs.config.on_submit = ->(feedback) { submitted << feedback }
+
+      feedback = Feedback.submit(
+        { 'kind' => 'bug', 'message' => 'It broke', 'status' => 'resolved',
+          'page_url' => 'https://example.com/a?token=secret' },
+        author: Author.new(7, 'ann@example.com'), tenant: 'org-1', user_agent: 'Script/1.0'
+      )
+
+      assert_predicate feedback, :persisted?
+      assert_equal 'https://example.com/a', feedback.page_url
+      assert_equal %w[7 ann@example.com org-1 Script/1.0 open],
+                   [feedback.author_id, feedback.author_label, feedback.tenant, feedback.user_agent, feedback.status]
+      assert_equal [feedback], submitted
+    end
+
+    test 'submit returns errors without saving or notifying' do
+      Ideasbugs.config.on_submit = ->(_feedback) { flunk 'notified' }
+
+      feedback = Feedback.submit({ kind: 'bug', message: '' })
+
+      assert_not feedback.persisted?
+      assert feedback.errors[:message].present?
+    end
   end
 end

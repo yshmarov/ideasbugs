@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'uri'
-
 module Ideasbugs
   # Who is asking, which tenant they are in, and the gates that answer both.
   #
@@ -48,24 +46,6 @@ module Ideasbugs
     # triage, or delete feedback in their own tenant — a cross-tenant id 404s.
     def tenant_scope
       Feedback.for_tenant(current_tenant)
-    end
-
-    # Browser URLs can carry password-reset tokens, signed ids, and campaign
-    # details in their query or fragment. Store only a bounded HTTP(S) location
-    # without credentials before it reaches the feedback table.
-    def clean_page_url(value)
-      raw = value.to_s
-      return if raw.blank? || raw.length > 2_048
-
-      uri = URI.parse(raw)
-      return unless %w[http https].include?(uri.scheme&.downcase)
-      return if uri.host.blank? || uri.userinfo.present?
-
-      uri.query = nil
-      uri.fragment = nil
-      uri.to_s.first(255)
-    rescue URI::InvalidURIError
-      nil
     end
   end
 end

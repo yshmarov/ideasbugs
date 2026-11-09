@@ -22,17 +22,15 @@ module Ideasbugs
     end
 
     def create
-      feedback = Feedback.new(feedback_params)
-      feedback.page_url = clean_page_url(feedback.page_url)
-      feedback.user_agent = request.user_agent
-      feedback.tenant = current_tenant
-      attribute_author(feedback)
+      feedback = Feedback.submit(
+        params.require(:feedback).permit(*Feedback::SUBMITTED_ATTRIBUTES),
+        author: current_author,
+        tenant: current_tenant,
+        user_agent: request.user_agent,
+        screenshots: params.dig(:feedback, :screenshots)
+      )
 
-      error = attach_screenshots(feedback)
-      return render json: { errors: [error] }, status: :unprocessable_entity if error
-
-      if feedback.save
-        notify_host(feedback)
+      if feedback.persisted?
         head :created
       else
         render json: { errors: feedback.errors.full_messages }, status: :unprocessable_entity
@@ -41,61 +39,8 @@ module Ideasbugs
 
     private
 
-    # The host's hook must never turn a saved submission into a 500 — the
-    # feedback is in the database; notification failures are the host's logs'
-    # problem.
-    def notify_host(feedback)
-      Ideasbugs.config.on_submit.call(feedback)
-    rescue StandardError => e
-      Rails.logger.error("ideasbugs: on_submit hook raised #{e.class}: #{e.message}")
-    end
-
-    def feedback_params
-      params.require(:feedback).permit(:kind, :section, :message, :page_url)
-    end
-
-    def attribute_author(feedback)
-      author = current_author
-      return unless author
-
-      feedback.author_id = author.id.to_s if author.respond_to?(:id)
-      feedback.author_label = Ideasbugs.config.author_label.call(author)
-    end
-
-    # Validates and attaches uploads. Returns an error message, or nil when
-    # everything (including "no screenshots at all") is fine.
-    def attach_screenshots(feedback)
-      files = Array(params.dig(:feedback, :screenshots)).reject(&:blank?)
-      return nil if files.empty?
-      return t_error(:error_save) unless Ideasbugs.config.screenshots_enabled?
-      return t_error(:error_too_many, count: Ideasbugs.config.max_screenshots) if too_many?(files)
-      return t_error(:error_too_large, size: max_size_mb) if files.any? { |f| f.size > max_size }
-      return t_error(:error_save) unless files.all? { |f| f.content_type.to_s.start_with?('image/') }
-
-      feedback.screenshots.attach(files)
-      nil
-    end
-
-    def too_many?(files)
-      files.size > Ideasbugs.config.max_screenshots
-    end
-
-    def max_size_mb
-      max_size / (1024 * 1024)
-    end
-
-    def max_size
-      Ideasbugs.config.max_screenshot_size
-    end
-
-    def t_error(key, **args)
-      defaults = {
-        error_save: 'Could not send feedback. Please try again.',
-        error_too_many: 'Too many screenshots (max %{count}).',
-        error_too_large: 'A screenshot is too large (max %{size} MB).',
-        error_rate_limited: 'Too many submissions. Please wait a moment and try again.'
-      }
-      I18n.t(key, scope: :ideasbugs, default: defaults[key], **args)
+    def t_error(key, **)
+      Feedback.submission_error(key, **)
     end
   end
 end
