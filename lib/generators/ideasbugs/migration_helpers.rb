@@ -24,9 +24,18 @@ module Ideasbugs
       # template is expanded at generate time: emitting the method name would
       # put `id: primary_key_type` in the migration, where nothing defines it.
       def primary_key_type_option
+        primary_key_type ? ", id: :#{primary_key_type}" : ''
+      end
+
+      # The same lookup for a column that points back at a feedback row, so
+      # `duplicate_of_id` matches a uuid-keyed table's own id.
+      def reference_type_option
+        primary_key_type ? ", type: :#{primary_key_type}" : ''
+      end
+
+      def primary_key_type
         config = Rails.configuration.generators
-        type = config.options[config.orm][:primary_key_type]
-        type ? ", id: :#{type}" : ''
+        config.options[config.orm][:primary_key_type]
       end
     end
   end

@@ -9,7 +9,9 @@
 
     <%# The shared status switch, carrying the status the heading badge used to
         state: the current one is lit and inert, every other one is a submit
-        that files the report under it. One form, no JS. %>
+        that files the report under it. One form, no JS. A duplicate has no
+        lifecycle of its own: it follows its original. %>
+    <% unless feedback.duplicate? %>
     <%= form_with url: feedback_path(feedback), method: :patch, class: 'status-switch' do %>
       <% Ideasbugs::Feedback::STATUSES.each do |status| %>
         <% label = t("ideasbugs.statuses.#{status}", default: status.humanize) %>
@@ -23,9 +25,28 @@
         <% end %>
       <% end %>
     <% end %>
+    <% end %>
   </div>
 
   <div class="detail-scroll">
+    <% if flash[:alert] %>
+      <p class="flash alert" role="alert"><%= flash[:alert] %></p>
+    <% end %>
+
+    <% if feedback.duplicate? && (original = feedback.duplicate_of) %>
+      <div class="card pad duplicate-of">
+        <p>
+          <%= t('ideasbugs.dashboard.duplicate_of', default: 'Duplicate of') %>
+          <%= link_to "##{original.id}", feedbacks_path(status: original.status, feedback_id: original.id) %>
+          <span class="badge status-<%= original.status %>">
+            <%= t("ideasbugs.statuses.#{original.status}", default: original.status.humanize) %>
+          </span>
+        </p>
+        <p class="muted"><%= truncate(original.message, length: 160) %></p>
+        <%= button_to t('ideasbugs.dashboard.not_duplicate', default: 'Not a duplicate'),
+                      feedback_duplicate_path(feedback), method: :delete, class: 'small' %>
+      </div>
+    <% end %>
     <div class="card pad">
       <dl>
         <% if feedback.section.present? %>
@@ -63,9 +84,38 @@
       <% end %>
     </div>
 
+    <% duplicates = Ideasbugs::Feedback.tracks_duplicates? ? feedback.duplicates.newest_first.to_a : [] %>
+    <% if duplicates.any? %>
+      <section class="card duplicates" aria-labelledby="duplicates-<%= feedback.id %>">
+        <h2 id="duplicates-<%= feedback.id %>">
+          <%= t('ideasbugs.dashboard.duplicates', default: 'Duplicates') %> <span class="count"><%= duplicates.size %></span>
+        </h2>
+        <% duplicates.each do |duplicate| %>
+          <%= link_to feedbacks_path(status: feedback.status, feedback_id: duplicate.id), class: 'record-row' do %>
+            <span class="record-main">
+              <span class="record-copy"><%= truncate(duplicate.message, length: 120) %></span>
+              <span class="muted record-meta">
+                <span>#<%= duplicate.id %></span>
+                <% if duplicate.author_label.present? %>
+                  <span><%= duplicate.author_label %></span>
+                <% end %>
+              </span>
+            </span>
+          <% end %>
+        <% end %>
+      </section>
+    <% end %>
+
     <%# Status lives in the switch in the heading; only what a switch cannot say
         is left here. %>
     <div class="actions">
+      <% if Ideasbugs::Feedback.tracks_duplicates? && !feedback.duplicate? %>
+        <%= form_with url: feedback_duplicate_path(feedback), method: :post, class: 'mark-duplicate' do %>
+          <label for="original_id_<%= feedback.id %>"><%= t('ideasbugs.dashboard.mark_duplicate', default: 'Mark as duplicate of #') %></label>
+          <input type="text" name="original_id" id="original_id_<%= feedback.id %>" required autocomplete="off">
+          <button><%= t('ideasbugs.dashboard.mark_duplicate_submit', default: 'Mark duplicate') %></button>
+        <% end %>
+      <% end %>
       <%= button_to t('ideasbugs.dashboard.delete', default: 'Delete'),
                     feedback_path(feedback),
                     method: :delete, class: 'danger',

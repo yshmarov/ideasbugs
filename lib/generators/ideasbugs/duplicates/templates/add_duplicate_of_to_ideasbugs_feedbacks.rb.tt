@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+class AddDuplicateOfToIdeasbugsFeedbacks < ActiveRecord::Migration<%= migration_version %>
+  def change
+    add_reference :ideasbugs_feedbacks, :duplicate_of<%= reference_type_option %>, index: true
+  end
+end

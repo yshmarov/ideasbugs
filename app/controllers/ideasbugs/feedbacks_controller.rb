@@ -11,15 +11,16 @@ module Ideasbugs
       @status = Feedback::STATUSES.include?(params[:status]) ? params[:status] : 'open'
       @kind = Ideasbugs.config.kinds.map(&:to_s).include?(params[:kind]) ? params[:kind] : nil
       @query = params[:q].to_s.strip.presence
-      @counts = tenant_scope.group(:status).count
+      @counts = tenant_scope.originals.group(:status).count
 
-      scope = tenant_scope.where(status: @status)
+      scope = tenant_scope.originals.where(status: @status)
       scope = scope.where(kind: @kind) if @kind
       scope = search(scope) if @query
       @page = [params[:page].to_i, 1].max
       @feedbacks = scope.newest_first.offset((@page - 1) * PER_PAGE).limit(PER_PAGE + 1).to_a
       @more = @feedbacks.size > PER_PAGE
       @feedbacks = @feedbacks.first(PER_PAGE)
+      @duplicate_counts = duplicate_counts(@feedbacks)
 
       @selected_feedback = tenant_scope.find_by(id: params[:feedback_id]) if params[:feedback_id].present?
 
@@ -42,6 +43,13 @@ module Ideasbugs
     end
 
     private
+
+    # One grouped query for the whole page rather than a count per row.
+    def duplicate_counts(feedbacks)
+      return {} unless Feedback.tracks_duplicates?
+
+      tenant_scope.where(duplicate_of_id: feedbacks.map(&:id)).group(:duplicate_of_id).count
+    end
 
     def set_feedback
       @feedback = tenant_scope.find(params[:id])

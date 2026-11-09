@@ -74,7 +74,7 @@ the things it should not do. It ships inside the gem, so
 |              |                                                                          |
 | ------------ | ------------------------------------------------------------------------ |
 | **Widget**   | Type (bug / feature / other), optional section, message, up to 3 screenshots |
-| **Dashboard**| Status tabs (open → in review → resolved), type filter, search, inline screenshots |
+| **Dashboard**| Status tabs (open → in review → resolved), type filter, search, inline screenshots, duplicates |
 | **Storage**  | `ideasbugs_feedbacks` — ordinary Active Record rows you can query and export |
 | **Deps**     | None. Plain JS — no Tailwind, no Stimulus, no importmap, no build step    |
 | **Auth**     | Lambdas over the raw request — Devise, Rails 8 auth, Basic auth, anything |
@@ -223,7 +223,90 @@ end
 Each row stores `kind`, `section`, `message`, `status` (`open` / `in_review` /
 `resolved`), `page_url`, `user_agent`, an optional `tenant`, and optional
 `author_id` / `author_label`. Screenshots are Active Storage attachments
-(`feedback.screenshots`).
+(`feedback.screenshots`). `duplicate_of_id` points a duplicate at its original.
+
+## Duplicates
+
+When two people ask for the same thing, open one in the dashboard and mark it
+as a duplicate of the other by number. The duplicate leaves the queue but keeps
+its own words, author and screenshots, and the original lists it with a count.
+**Not a duplicate** puts it back. Nothing is merged, so marking is safe to undo.
+
+```ruby
+duplicate.mark_duplicate_of!(original) # one level deep, see below
+original.duplicates                    # an ordinary relation
+Ideasbugs::Feedback.originals          # everything that isn't a duplicate
+duplicate.unmark_duplicate!
+```
+
+The link is always one level deep. A duplicate of a duplicate points at the
+original, marking an original moves its own duplicates along with it, and
+marking an original as a duplicate of one of its duplicates swaps the two.
+Both must be on the same board (tenant). Deleting an original puts its
+duplicates back in the queue. A duplicate follows its original's status in the
+dashboard and keeps its own `status` for when it is unmarked.
+
+**Upgrading from 1.2 or earlier:** run
+`bin/rails generate ideasbugs:duplicates && bin/rails db:migrate`. Until then
+the dashboard works as before, without duplicate controls.
+
+## File feedback from your own API
+
+The widget is one way in. If your app already has an API, one endpoint lets
+scripts, integrations and AI agents file feedback with the tokens they already
+use for the rest of it. `Ideasbugs::Feedback.submit` applies the widget's rules
+(page URL privacy filtering, attribution, screenshot limits, `on_submit`), so
+API feedback lands in the same dashboard and nothing drifts:
+
+```ruby
+# config/routes.rb
+namespace :api do
+  resource :feedback, only: :create
+end
+```
+
+```ruby
+# app/controllers/api/feedbacks_controller.rb
+class Api::FeedbacksController < Api::BaseController # your token-authenticated base
+  rate_limit to: 10, within: 1.minute, by: -> { current_user.id }
+
+  def create
+    feedback = Ideasbugs::Feedback.submit(
+      params.require(:feedback).permit(:kind, :section, :message, :page_url),
+      author: current_user,
+      tenant: Current.organization&.to_gid&.to_s, # what config.tenant returns; omit for one board
+      user_agent: request.user_agent
+    )
+
+    if feedback.persisted?
+      render json: { id: feedback.id, kind: feedback.kind, status: feedback.status }, status: :created
+    else
+      render json: { errors: feedback.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+end
+```
+
+```bash
+curl -X POST https://app.example.com/api/feedback \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"feedback":{"kind":"bug","message":"The yearly export times out."}}'
+```
+
+`submit` reads only `kind`, `section`, `message` and `page_url`, and returns
+the record: check `persisted?` and `errors`. Your endpoint still owns:
+
+- **Authentication.** The gem has no tokens of its own. Attribute feedback to
+  the token's user so the dashboard shows who sent it.
+- **The gates.** `config.enabled` and `config.rate_limit` guard the widget's
+  endpoint only. Apply the same rule and a throttle here.
+- **The tenant.** Pass the key `config.tenant` would return for that user, or
+  the feedback lands on the global board.
+- **Screenshots.** Pass uploaded files as `screenshots:` from a multipart
+  request. A JSON-only endpoint can stay text-only.
+
+To let agents find it, list the endpoint in your API docs or OpenAPI schema
+like any other.
 
 ## Multi-tenancy
 
@@ -276,8 +359,10 @@ stable under semantic versioning:
 
 - `Ideasbugs::Feedback`, including `kind`, `section`, `message`, `status`,
   `page_url`, `user_agent`, `tenant`, `author_id`, `author_label`, timestamps,
-  `STATUSES`, status helpers/scopes, `newest_first`, `for_tenant`, and gated
-  `screenshots`.
+  `STATUSES`, status helpers/scopes, `newest_first`, `for_tenant`, gated
+  `screenshots`, `Feedback.submit`, and the duplicate API (`duplicate_of`,
+  `duplicates`, `duplicate?`, `originals`, `mark_duplicate_of!`,
+  `unmark_duplicate!`).
 - `has_feedback` and the host-model collection it defines.
 - `Ideasbugs.configure` and the documented configuration options.
 - `mount_ideasbugs`, `ideasbugs_tag`, and `data-ideasbugs-open`.

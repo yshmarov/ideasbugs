@@ -286,8 +286,8 @@
 }
 
 /* ---------------------------------------------------------------------------
- * GEM-SPECIFIC — ideasbugs only: the kind and status badges, and the
- * screenshots a reporter attached.
+ * GEM-SPECIFIC — ideasbugs only: the kind and status badges, the
+ * screenshots a reporter attached, and duplicates.
  * ------------------------------------------------------------------------- */
 
 :root {
@@ -313,6 +313,14 @@
   & .status-switch button.current.status-open { color: var(--ib-open); }
   & .status-switch button.current.status-in_review { color: var(--ib-in-review); }
   & .status-switch button.current.status-resolved { color: var(--ib-resolved); }
+
+  /* A duplicate's link to its original, and the original's list of them. */
+  & .duplicate-of p { margin: 0 0 8px; }
+  & .duplicates h2 { margin: 0; padding: 12px 14px; border-bottom: 1px solid var(--ib-border); font-size: 14px; }
+  & .duplicates .record-row:last-child { border-bottom: 0; }
+  & .actions form.mark-duplicate { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  & .mark-duplicate label { color: var(--ib-muted); font-size: 13px; white-space: nowrap; }
+  & .mark-duplicate input { width: 9em; }
 
   & .shots { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
   & .shots img { max-width: 280px; max-height: 200px; border: 1px solid var(--ib-border); border-radius: 8px; }

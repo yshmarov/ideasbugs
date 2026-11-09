@@ -12,6 +12,7 @@ ActiveRecord::Schema.define do
     t.string :author_id
     t.string :author_label
     t.string :tenant
+    t.references :duplicate_of, index: true
     t.timestamps
   end
   add_index :ideasbugs_feedbacks, :status

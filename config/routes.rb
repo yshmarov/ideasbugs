@@ -14,6 +14,7 @@ Ideasbugs::Engine.routes.draw do
     # Screenshots stream through the dashboard's own gate, never via public
     # Active Storage blob URLs.
     resources :screenshots, only: :show
+    resource :duplicate, only: %i[create destroy]
   end
 
   root to: 'feedbacks#index'

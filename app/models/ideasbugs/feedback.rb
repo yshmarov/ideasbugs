@@ -34,6 +34,25 @@ module Ideasbugs
       scope status, -> { where(status:) }
     end
 
+    # A duplicate is a judgment, not a merge: the row keeps its own words,
+    # author and screenshots, and points at the original asking for the same
+    # thing. Always one level deep, so nothing walks a chain. Installs from
+    # before 1.3 lack the column until they run `ideasbugs:duplicates`, and
+    # everything below stays inert until then; hence no `dependent:` here.
+    belongs_to :duplicate_of, class_name: 'Ideasbugs::Feedback', optional: true, inverse_of: :duplicates
+    has_many :duplicates, class_name: 'Ideasbugs::Feedback', foreign_key: :duplicate_of_id,
+                          inverse_of: :duplicate_of
+
+    validate :duplicate_of_an_original, if: -> { self.class.tracks_duplicates? && duplicate_of_id_changed? }
+    before_destroy :release_duplicates
+
+    # What the queue lists: everything that is not a duplicate of something else.
+    scope :originals, -> { tracks_duplicates? ? where(duplicate_of_id: nil) : all }
+
+    def self.tracks_duplicates?
+      column_names.include?('duplicate_of_id')
+    end
+
     SUBMITTED_ATTRIBUTES = %i[kind section message page_url].freeze
 
     # Files feedback the way the widget does: privacy-filtered page URL, author
@@ -91,6 +110,30 @@ module Ideasbugs
       respond_to?(:screenshots) && screenshots.attached?
     end
 
+    def duplicate?
+      self.class.tracks_duplicates? && duplicate_of_id.present?
+    end
+
+    # Files this feedback under `original` as asking for the same thing. The
+    # link stays one level deep: a duplicate of a duplicate points at its
+    # original, this row's own duplicates move along with it, and marking an
+    # original as a duplicate of one of its own duplicates swaps the two.
+    def mark_duplicate_of!(original)
+      original = original.duplicate_of if original.duplicate_of_id && original.duplicate_of_id != id
+
+      transaction do
+        # Moving links fires nothing, and must not trip validations that a row
+        # filed under an older config would fail today.
+        duplicates.where.not(id: original.id).update_all(duplicate_of_id: original.id, updated_at: Time.current)
+        original.update_column(:duplicate_of_id, nil) if original.duplicate_of_id == id
+        update!(duplicate_of: original)
+      end
+    end
+
+    def unmark_duplicate!
+      update!(duplicate_of: nil)
+    end
+
     def attribute_to(author)
       return unless author
 
@@ -120,6 +163,28 @@ module Ideasbugs
     end
 
     private
+
+    def duplicate_of_an_original
+      return if duplicate_of_id.nil?
+
+      original = duplicate_of
+      if original.nil? || original.id == id
+        errors.add(:duplicate_of, 'must be another feedback')
+      elsif original.tenant != tenant
+        errors.add(:duplicate_of, 'must be on the same board')
+      elsif original.duplicate_of_id
+        errors.add(:duplicate_of, 'is itself a duplicate')
+      elsif persisted? && duplicates.exists?
+        errors.add(:base, 'Feedback with duplicates of its own cannot be a duplicate')
+      end
+    end
+
+    # Deleting an original puts its duplicates back in the queue.
+    def release_duplicates
+      return unless self.class.tracks_duplicates?
+
+      duplicates.update_all(duplicate_of_id: nil, updated_at: Time.current)
+    end
 
     def screenshot_error(files)
       config = Ideasbugs.config

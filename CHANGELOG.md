@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-10
+
+- **Duplicates.** Mark a feedback as a duplicate of another from the dashboard
+  (`Feedback#mark_duplicate_of!`, undone with `unmark_duplicate!`). The
+  duplicate leaves the queue and its counts, keeps its own message, author and
+  screenshots, and is listed on the original, which shows how many it has. The
+  link stays one level deep and within one tenant. Deleting an original puts
+  its duplicates back in the queue.
+- **Cost:** one nullable `duplicate_of_id` column. Existing installs run
+  `bin/rails generate ideasbugs:duplicates && bin/rails db:migrate`; until
+  then the dashboard behaves exactly as in 1.2, without duplicate controls.
+  Fresh installs get the column from `ideasbugs:install`. No initializer
+  change.
+- Add a README recipe for filing feedback from a host's own API through
+  `Feedback.submit`.
+
 ## [1.2.0] - 2026-11-09
 
 - Add `Ideasbugs::Feedback.submit(attributes, author:, tenant:, user_agent:,

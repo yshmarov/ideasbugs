@@ -90,6 +90,10 @@ With `show_button = false`, any element carrying `data-ideasbugs-open` opens the
 
 `open → in_review → resolved`, as plain strings in `Ideasbugs::Feedback::STATUSES` with a scope per status (`Feedback.open`, `.in_review`, `.resolved`) plus `newest_first`. Deliberately not an Active Record enum — `open` as an enum scope would collide with `Kernel#open`. Do not "modernize" it into an enum.
 
+### Duplicates
+
+`duplicate.mark_duplicate_of!(original)` links two feedbacks asking for the same thing; `unmark_duplicate!` undoes it. A duplicate is a link, not a merge: never copy, move or delete its message, author or screenshots, and never change it through `update_all`. Go through these two methods, which keep the link one level deep and on one tenant. `bin/rails generate ideasbugs:duplicates` exists **only** to add the column to installs made before 1.3; a fresh install already has it.
+
 ### Multi-tenancy
 
 One resolver returning an **opaque key** — GlobalID, id, subdomain, slug. The gem never takes a foreign key into host models:
@@ -116,6 +120,7 @@ customer.feedback.open
 - **Do not expose screenshots by blob URL** — the gated route exists so a leaked signed URL cannot hand over a customer's screenshot.
 - **Do not set config outside the initializer.** `rate_limit` in particular is read once when the controller class loads; assigning config per-request mutates it process-wide.
 - **Do not convert the status strings to an enum** (see above).
+- **Do not re-implement submission rules in a host API endpoint.** Call `Ideasbugs::Feedback.submit` (README → File feedback from your own API). The host endpoint brings its own authentication, `enabled`-style gate, throttle and tenant key.
 
 ### Configuration worth knowing
 

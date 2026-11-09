@@ -60,6 +60,9 @@
                   <% if feedback.author_label.present? %>
                     <span><%= feedback.author_label %></span>
                   <% end %>
+                  <% if (duplicates = @duplicate_counts[feedback.id]) %>
+                    <span><%= t('ideasbugs.dashboard.duplicates_count', count: duplicates, default: 'Duplicates: %{count}') %></span>
+                  <% end %>
                 </span>
               </span>
               <% if feedback.screenshots? %>
