@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-11-10
+
+- Fix the dashboard queue under Rails edge Ractor requests. 1.3.0's
+  `Feedback.originals` scope raised `Ractor::IsolationError` in a non-main
+  Ractor. Normal Rails boots were unaffected. No migration or initializer
+  change.
+
 ## [1.3.0] - 2026-11-10
 
 - **Duplicates.** Mark a feedback as a duplicate of another from the dashboard

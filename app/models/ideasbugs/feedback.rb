@@ -47,7 +47,9 @@ module Ideasbugs
     before_destroy :release_duplicates
 
     # What the queue lists: everything that is not a duplicate of something else.
-    scope :originals, -> { tracks_duplicates? ? where(duplicate_of_id: nil) : all }
+    # `klass.`, not a bare call: relation delegation caches the method name on
+    # the class, which a non-main Ractor may not write.
+    scope :originals, -> { klass.tracks_duplicates? ? where(duplicate_of_id: nil) : all }
 
     def self.tracks_duplicates?
       column_names.include?('duplicate_of_id')
