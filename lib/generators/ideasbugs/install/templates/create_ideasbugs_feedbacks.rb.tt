@@ -10,6 +10,7 @@ class CreateIdeasbugsFeedbacks < ActiveRecord::Migration<%= migration_version %>
       t.string :page_url
       t.string :user_agent
       t.string :author_id
+      t.string :author_type
       t.string :author_label
       t.string :tenant # opaque per-tenant key; nil = single global board
       t.references :duplicate_of<%= reference_type_option %>, index: true

@@ -53,9 +53,9 @@
           <dt><%= t('ideasbugs.section', default: 'Section') %></dt>
           <dd><%= feedback.section %></dd>
         <% end %>
-        <% if feedback.author_label.present? || feedback.author_id.present? %>
+        <% if (author = feedback.author_reference) %>
           <dt><%= t('ideasbugs.dashboard.from', default: 'From') %></dt>
-          <dd><%= feedback.author_label.presence || "##{feedback.author_id}" %></dd>
+          <dd><%= author %></dd>
         <% end %>
         <% if feedback.page_url.present? %>
           <dt><%= t('ideasbugs.dashboard.page', default: 'Page') %></dt>

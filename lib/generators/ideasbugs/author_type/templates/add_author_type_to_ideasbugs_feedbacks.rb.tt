@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+class AddAuthorTypeToIdeasbugsFeedbacks < ActiveRecord::Migration<%= migration_version %>
+  def change
+    add_column :ideasbugs_feedbacks, :author_type, :string
+  end
+end

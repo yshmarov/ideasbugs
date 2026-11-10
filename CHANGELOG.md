@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-11-10
+
+- **Typed authors.** `Feedback.submit` and the widget store the author's class
+  in a new `author_type` column next to `author_id`, so a host that files
+  feedback from more than one kind of record (a user, an API token, an
+  organisation) can tell `User #7` from `Token #7`. Active Record models are
+  stored by `polymorphic_name`. The dashboard shows `User #7` when the host
+  stores no `author_label`.
+- **Cost:** one nullable string column, no foreign key. Existing installs run
+  `bin/rails generate ideasbugs:author_type && bin/rails db:migrate`; until
+  then attribution works exactly as in 1.3. Existing rows keep a nil type,
+  because the gem cannot know which class their ids belong to: backfill it
+  yourself if they share one. No initializer change.
+
 ## [1.3.1] - 2026-11-10
 
 - Fix the dashboard queue under Rails edge Ractor requests. 1.3.0's

@@ -10,6 +10,7 @@ ActiveRecord::Schema.define do
     t.string :page_url
     t.string :user_agent
     t.string :author_id
+    t.string :author_type
     t.string :author_label
     t.string :tenant
     t.references :duplicate_of, index: true

@@ -155,7 +155,7 @@ Everything is optional; a fresh install works with zero config. Full list with c
 | No Feedback button | `ideasbugs_tag` missing from the rendered layout, `config.enabled` false, or `show_button = false` with no opener of your own |
 | Submissions rejected with an invalid-token error | The layout is missing `csrf_meta_tags` |
 | No screenshot upload control | Active Storage not installed, or `screenshots = false` |
-| `ideasbugs:tenant` fails on a duplicate column | It is an upgrade generator for pre-tenant installs; a fresh install already has the column |
+| `ideasbugs:tenant`, `ideasbugs:duplicates` or `ideasbugs:author_type` fails on a duplicate column | They are upgrade generators for older installs; a fresh install already has the column |
 | `undefined local variable current_user` in the initializer | A gate lambda treated its argument as a controller. It is a `request` |
 
 ---

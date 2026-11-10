@@ -80,9 +80,20 @@ module Ideasbugs
 
       assert_predicate feedback, :persisted?
       assert_equal 'https://example.com/a', feedback.page_url
-      assert_equal %w[7 ann@example.com org-1 Script/1.0 open],
-                   [feedback.author_id, feedback.author_label, feedback.tenant, feedback.user_agent, feedback.status]
+      assert_equal ['7', Author.name, 'ann@example.com', 'org-1', 'Script/1.0', 'open'],
+                   feedback.attributes.values_at('author_id', 'author_type', 'author_label', 'tenant', 'user_agent',
+                                                 'status')
       assert_equal [feedback], submitted
+    end
+
+    test 'shows the author reference when the host stores no label' do
+      feedback = Feedback.new(author_id: '7', author_type: 'User')
+
+      assert_equal 'User #7', feedback.author_reference
+      feedback.author_label = 'ann@example.com'
+
+      assert_equal 'ann@example.com', feedback.author_reference
+      assert_nil Feedback.new.author_reference
     end
 
     test 'submit returns errors without saving or notifying' do
@@ -92,6 +103,37 @@ module Ideasbugs
 
       assert_not feedback.persisted?
       assert feedback.errors[:message].present?
+    end
+  end
+
+  # Same schema-change caveats as DuplicatesLegacySchemaTest.
+  class AuthorTypeLegacySchemaTest < ActiveSupport::TestCase
+    self.use_transactional_tests = false
+
+    setup do
+      @connection = Feedback.connection
+      @connection.remove_column :ideasbugs_feedbacks, :author_type
+      forget_schema
+    end
+
+    teardown do
+      Feedback.delete_all
+      @connection.add_column :ideasbugs_feedbacks, :author_type, :string
+      forget_schema
+    end
+
+    def forget_schema
+      Feedback.connection_pool.connections.each(&:clear_cache!)
+      Feedback.reset_column_information
+    end
+
+    test 'installs without the column still attribute the author' do
+      author = FeedbackTest::Author.new(7, 'ann@example.com')
+      feedback = Feedback.submit({ kind: 'bug', message: 'It broke' }, author:)
+
+      assert_not Feedback.tracks_author_type?
+      assert_equal %w[7 ann@example.com], [feedback.reload.author_id, feedback.author_label]
+      assert_equal '#7', Feedback.new(author_id: '7').author_reference
     end
   end
 end

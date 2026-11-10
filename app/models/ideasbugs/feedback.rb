@@ -55,6 +55,11 @@ module Ideasbugs
       column_names.include?('duplicate_of_id')
     end
 
+    # Installs before 1.4 lack the column until they run `ideasbugs:author_type`.
+    def self.tracks_author_type?
+      column_names.include?('author_type')
+    end
+
     SUBMITTED_ATTRIBUTES = %i[kind section message page_url].freeze
 
     # Files feedback the way the widget does: privacy-filtered page URL, author
@@ -140,7 +145,16 @@ module Ideasbugs
       return unless author
 
       self.author_id = author.id.to_s if author.respond_to?(:id)
+      klass = author.class
+      self.author_type = klass.try(:polymorphic_name) || klass.name if self.class.tracks_author_type?
       self.author_label = Ideasbugs.config.author_label.call(author)
+    end
+
+    # What the dashboard shows when the host stores no label: "User #7".
+    def author_reference
+      return author_label if author_label.present?
+
+      [attributes['author_type'], "##{author_id}"].compact.join(' ') if author_id.present?
     end
 
     # Attaches uploads, or returns the error that rejects them. No screenshots

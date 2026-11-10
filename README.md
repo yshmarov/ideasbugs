@@ -222,7 +222,9 @@ end
 
 Each row stores `kind`, `section`, `message`, `status` (`open` / `in_review` /
 `resolved`), `page_url`, `user_agent`, an optional `tenant`, and optional
-`author_id` / `author_label`. Screenshots are Active Storage attachments
+`author_id` / `author_type` / `author_label`. `author_type` is the author's
+class (`polymorphic_name` for Active Record models), so ids from different
+kinds of author cannot be confused. Screenshots are Active Storage attachments
 (`feedback.screenshots`). `duplicate_of_id` points a duplicate at its original.
 
 ## Duplicates
@@ -249,6 +251,11 @@ dashboard and keeps its own `status` for when it is unmarked.
 **Upgrading from 1.2 or earlier:** run
 `bin/rails generate ideasbugs:duplicates && bin/rails db:migrate`. Until then
 the dashboard works as before, without duplicate controls.
+
+**Upgrading from 1.3 or earlier:** run
+`bin/rails generate ideasbugs:author_type && bin/rails db:migrate` to store
+the author's class. Until then `author_type` stays empty. Existing rows keep a
+nil type; backfill it if all your authors share one class.
 
 ## File feedback from your own API
 
@@ -297,7 +304,8 @@ curl -X POST https://app.example.com/api/feedback \
 the record: check `persisted?` and `errors`. Your endpoint still owns:
 
 - **Authentication.** The gem has no tokens of its own. Attribute feedback to
-  the token's user so the dashboard shows who sent it.
+  the token's user so the dashboard shows who sent it. A token that belongs to
+  no user can be the author itself: `author_type` records which it was.
 - **The gates.** `config.enabled` and `config.rate_limit` guard the widget's
   endpoint only. Apply the same rule and a throttle here.
 - **The tenant.** Pass the key `config.tenant` would return for that user, or
@@ -358,7 +366,7 @@ The following are the model and integration contracts that 1.x will keep
 stable under semantic versioning:
 
 - `Ideasbugs::Feedback`, including `kind`, `section`, `message`, `status`,
-  `page_url`, `user_agent`, `tenant`, `author_id`, `author_label`, timestamps,
+  `page_url`, `user_agent`, `tenant`, `author_id`, `author_type`, `author_label`, timestamps,
   `STATUSES`, status helpers/scopes, `newest_first`, `for_tenant`, gated
   `screenshots`, `Feedback.submit`, and the duplicate API (`duplicate_of`,
   `duplicates`, `duplicate?`, `originals`, `mark_duplicate_of!`,
