@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class AddTenantToIdeasbugsFeedbacks < ActiveRecord::Migration<%= migration_version %>
+<% if concurrent_indexes? -%>
+  disable_ddl_transaction!
+
+<% end -%>
   def change
     add_column :ideasbugs_feedbacks, :tenant, :string
-    add_index :ideasbugs_feedbacks, %i[tenant status]
+    add_index :ideasbugs_feedbacks, %i[tenant status]<%= concurrent_index_option %>
   end
 end

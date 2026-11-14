@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+- **Upgrade generators run under strong_migrations.** On PostgreSQL,
+  `ideasbugs:tenant` and `ideasbugs:duplicates` now write migrations that build
+  their index concurrently, outside a transaction. They used to add it with a
+  plain `CREATE INDEX`, which blocks writes to `ideasbugs_feedbacks` while it
+  builds, and strong_migrations refused to run them at all. Other adapters get
+  the same migration as before.
+- **Cost:** none for existing installs; only newly generated migrations change.
+  A concurrent build that fails leaves an invalid index behind, which you drop
+  before running the migration again.
+
 ## [1.4.0] - 2026-11-10
 
 - **Typed authors.** `Feedback.submit` and the widget store the author's class
