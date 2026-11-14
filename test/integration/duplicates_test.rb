@@ -85,7 +85,8 @@ module Ideasbugs
 
     teardown do
       Feedback.delete_all
-      @connection.add_reference :ideasbugs_feedbacks, :duplicate_of, index: true
+      @connection.add_reference :ideasbugs_feedbacks, :duplicate_of,
+                                index: true, foreign_key: { to_table: :ideasbugs_feedbacks, on_delete: :nullify }
       forget_schema
     end
 

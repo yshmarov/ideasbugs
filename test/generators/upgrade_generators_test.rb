@@ -65,6 +65,8 @@ class DuplicatesGeneratorTest < Rails::Generators::TestCase
     assert_migration 'db/migrate/add_duplicate_of_to_ideasbugs_feedbacks.rb' do |migration|
       assert_match 'disable_ddl_transaction!', migration
       assert_match 'index: { algorithm: :concurrently }', migration
+      assert_match 'on_delete: :nullify, validate: false', migration
+      assert_match 'validate_foreign_key :ideasbugs_feedbacks, column: :duplicate_of_id', migration
     end
     assert_ruby Dir[File.join(destination_root, 'db/migrate/*_add_duplicate_of_to_ideasbugs_feedbacks.rb')].sole
   end
@@ -76,6 +78,7 @@ class DuplicatesGeneratorTest < Rails::Generators::TestCase
       refute_match 'disable_ddl_transaction!', migration
       refute_match 'concurrently', migration
       assert_match 'index: true', migration
+      assert_match 'foreign_key: { to_table: :ideasbugs_feedbacks, on_delete: :nullify }', migration
     end
     assert_ruby Dir[File.join(destination_root, 'db/migrate/*_add_duplicate_of_to_ideasbugs_feedbacks.rb')].sole
   end

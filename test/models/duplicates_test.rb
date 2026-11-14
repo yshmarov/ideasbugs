@@ -88,5 +88,18 @@ module Ideasbugs
 
       assert_not duplicate.reload.duplicate?
     end
+
+    # A host purging feedback in bulk skips the callback; the foreign key's
+    # ON DELETE SET NULL releases the duplicates instead of leaving them
+    # pointing at a row that no longer exists.
+    test 'deleting an original without callbacks still releases its duplicates' do
+      original = feedback!
+      duplicate = feedback!
+      duplicate.mark_duplicate_of!(original)
+
+      Ideasbugs::Feedback.where(id: original.id).delete_all
+
+      assert_not duplicate.reload.duplicate?
+    end
   end
 end

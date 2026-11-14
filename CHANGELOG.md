@@ -11,6 +11,18 @@
 - **Cost:** none for existing installs; only newly generated migrations change.
   A concurrent build that fails leaves an invalid index behind, which you drop
   before running the migration again.
+- **`duplicate_of_id` gets a foreign key** with `ON DELETE SET NULL`, in both
+  the install and `ideasbugs:duplicates` migrations. `release_duplicates`
+  already cleared the link on `destroy`, but a bulk `delete_all` left
+  duplicates pointing at a row that no longer existed. The database now
+  releases them either way.
+- **Cost:** installs that already ran `ideasbugs:duplicates` (1.3, 1.4) don't
+  get the key until they add it themselves:
+  `add_foreign_key :ideasbugs_feedbacks, :ideasbugs_feedbacks, column: :duplicate_of_id, on_delete: :nullify`
+  (on PostgreSQL with strong_migrations, add it with `validate: false`, then
+  `validate_foreign_key` in a migration with `disable_ddl_transaction!`).
+  Rows already pointing at a deleted feedback make validation fail: clear them
+  first with `Ideasbugs::Feedback.where.not(duplicate_of_id: Ideasbugs::Feedback.select(:id)).update_all(duplicate_of_id: nil)`.
 
 ## [1.4.0] - 2026-11-10
 
