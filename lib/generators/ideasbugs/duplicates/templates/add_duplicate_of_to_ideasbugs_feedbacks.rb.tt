@@ -1,7 +1,19 @@
 # frozen_string_literal: true
 
 class AddDuplicateOfToIdeasbugsFeedbacks < ActiveRecord::Migration<%= migration_version %>
+<% if concurrent_indexes? -%>
+  disable_ddl_transaction!
+
   def change
-    add_reference :ideasbugs_feedbacks, :duplicate_of<%= reference_type_option %>, index: true
+    add_reference :ideasbugs_feedbacks, :duplicate_of<%= reference_type_option %>, index: { algorithm: :concurrently }
+    add_foreign_key :ideasbugs_feedbacks, :ideasbugs_feedbacks,
+                    column: :duplicate_of_id, on_delete: :nullify, validate: false
+    reversible { |direction| direction.up { validate_foreign_key :ideasbugs_feedbacks, column: :duplicate_of_id } }
   end
+<% else -%>
+  def change
+    add_reference :ideasbugs_feedbacks, :duplicate_of<%= reference_type_option %>, index: true,
+                  foreign_key: { to_table: :ideasbugs_feedbacks, on_delete: :nullify }
+  end
+<% end -%>
 end

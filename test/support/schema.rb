@@ -13,7 +13,7 @@ ActiveRecord::Schema.define do
     t.string :author_type
     t.string :author_label
     t.string :tenant
-    t.references :duplicate_of, index: true
+    t.references :duplicate_of, index: true, foreign_key: { to_table: :ideasbugs_feedbacks, on_delete: :nullify }
     t.timestamps
   end
   add_index :ideasbugs_feedbacks, :status
